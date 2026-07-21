@@ -21,8 +21,10 @@
 - [x] Feed de-geo: global catalog browse without ZIP gate
 - [x] Messaging email-verification gate; purchase-verified reviews client alignment
 - [ ] Finish residual conversion: Pro Seller / Featured checkout parity; remove leftover boost/premium/meetup UI; college/waitlist/seed cleanup
-- [ ] Full typecheck/lint green
+- [x] Typecheck pass (`npm run typecheck` clean)
+- [x] Initial git commit + push (repo: https://github.com/SaraWolf223/VtuberMarketplace — `UjuComics/VtuberMarketplace` was not creatable with the active `gh` account)
 - [ ] Human deploy of migrations `121`–`140` + new edge functions
+- [ ] Transfer/rename remote to `UjuComics/VtuberMarketplace` when that org/account is available
 
 ### Later
 
