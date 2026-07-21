@@ -14,12 +14,12 @@ import { useProfile } from '@/hooks/useProfile';
 import { useSellerBenefits } from '@/hooks/useSellerBenefits';
 import { usePremiumSubscription } from '@/hooks/usePremiumSubscription';
 import { usePremiumBilling } from '@/hooks/usePremiumBilling';
-import { isPremiumActive } from '@/features/monetization/premium-service';
+import { isProSellerOrLegacyPremium } from '@/features/monetization/pro-seller-service';
 import { canUseStripePaidMonetization } from '@/features/monetization/platform-payments';
 import { PremiumBadge } from '@/components/profile/PremiumBadge';
-import { BoostCreditsBanner } from '@/components/monetization/BoostCreditsBanner';
-import { PREMIUM_FREE_BOOSTS_PER_MONTH } from '@/constants/premium';
-import { BOOST_CHECKOUT, PREMIUM_CHECKOUT, formatUsdFromCents } from '@/constants/stripe-fees';
+import { FeaturedCreditsBanner } from '@/components/monetization/BoostCreditsBanner';
+import { PRO_SELLER_FEATURED_CREDITS_PER_MONTH } from '@/constants/pro-seller';
+import { PRO_SELLER_CHECKOUT, formatUsdFromCents } from '@/constants/stripe-fees';
 import { FREE_LISTINGS_PER_MONTH, PREMIUM_LISTINGS_PER_MONTH } from '@/constants/listings';
 import { LEGAL_URLS } from '@/constants/legal-urls';
 import { ErrorRetry } from '@/components/ui/ErrorRetry';
@@ -29,10 +29,11 @@ import { createThemedStyles } from '@/theme/useThemedStyles';
 import { fontSize, fontWeight } from '@/theme/typography';
 
 const BENEFITS = [
-  'Premium badge on your profile and listings',
-  `${PREMIUM_FREE_BOOSTS_PER_MONTH} free listing boosts every month ($${PREMIUM_FREE_BOOSTS_PER_MONTH} value)`,
+  'Pro Seller badge on your profile and listings',
+  '8% platform commission (free tier: 10%)',
+  `${PRO_SELLER_FEATURED_CREDITS_PER_MONTH} Featured Listing credits every month`,
   `Post up to ${PREMIUM_LISTINGS_PER_MONTH} listings per month (free accounts: ${FREE_LISTINGS_PER_MONTH})`,
-  `After free boosts: pay ${formatUsdFromCents(BOOST_CHECKOUT.totalCents)} each (includes card processing)`,
+  'Seller-scoped promo codes and timed listing sales',
 ];
 
 export default function PremiumScreen(): React.JSX.Element {
@@ -42,9 +43,9 @@ export default function PremiumScreen(): React.JSX.Element {
   const { data: profile, isLoading, isError, error, refetch } = useProfile();
   const {
     benefits,
-    premiumActive: benefitsPremium,
-    boostCreditsRemaining,
-    boostCreditsTotal,
+    proSellerActive: benefitsPro,
+    featuredCreditsRemaining,
+    featuredCreditsTotal,
     listingsRemaining,
     listingsLimit,
     isLoading: benefitsLoading,
@@ -81,13 +82,25 @@ export default function PremiumScreen(): React.JSX.Element {
   }
 
   const active =
-    benefitsPremium || isPremiumActive(profile.is_premium, profile.premium_until);
+    benefitsPro ||
+    isProSellerOrLegacyPremium(profile as {
+      is_pro_seller?: boolean;
+      pro_seller_until?: string | null;
+      is_premium?: boolean;
+      premium_until?: string | null;
+    });
+  const profilePro = profile as {
+    pro_seller_until?: string | null;
+    premium_until?: string | null;
+  };
   const renewsLabel =
-    profile.premium_until && active
-      ? `Active until ${new Date(profile.premium_until).toLocaleDateString()}`
-      : benefits?.premium_until && active
-        ? `Active until ${new Date(benefits.premium_until).toLocaleDateString()}`
-        : null;
+    profilePro.pro_seller_until && active
+      ? `Active until ${new Date(profilePro.pro_seller_until).toLocaleDateString()}`
+      : profilePro.premium_until && active
+        ? `Active until ${new Date(profilePro.premium_until).toLocaleDateString()}`
+        : benefits?.pro_seller_until && active
+          ? `Active until ${new Date(benefits.pro_seller_until).toLocaleDateString()}`
+          : null;
 
   return (
     <ScrollView
@@ -106,30 +119,28 @@ export default function PremiumScreen(): React.JSX.Element {
     >
       <View style={styles.hero}>
         <PremiumBadge />
-        <Text style={styles.title}>Premium Seller</Text>
+        <Text style={styles.title}>Pro Seller</Text>
         <Text style={styles.price}>
           {paidPurchasesAvailable
-            ? `${formatUsdFromCents(PREMIUM_CHECKOUT.baseCents)} / month + ${formatUsdFromCents(PREMIUM_CHECKOUT.processingFeeCents)} processing`
-            : 'Premium benefits'}
+            ? `${formatUsdFromCents(PRO_SELLER_CHECKOUT.baseCents)} / month + ${formatUsdFromCents(PRO_SELLER_CHECKOUT.processingFeeCents)} processing`
+            : 'Pro Seller benefits'}
         </Text>
         <Text style={styles.priceSub}>
           {paidPurchasesAvailable ? (
             <>
-          {formatUsdFromCents(PREMIUM_CHECKOUT.totalCents)} / month total · processing fee goes to
-          Stripe
+              {formatUsdFromCents(PRO_SELLER_CHECKOUT.totalCents)} / month total · processing fee
+              goes to Stripe
             </>
           ) : (
             'Purchases are disabled on iOS until Apple In-App Purchase is implemented.'
           )}
         </Text>
         {active ? (
-          <Text style={styles.active}>{renewsLabel ?? 'Premium active'}</Text>
+          <Text style={styles.active}>{renewsLabel ?? 'Pro Seller active'}</Text>
         ) : (
           <Text style={styles.sub}>
             {paidPurchasesAvailable ? (
-              <>
-            Opens secure Stripe checkout in your browser · test mode in development
-              </>
+              <>Opens secure Stripe checkout in your browser · test mode in development</>
             ) : (
               'Free marketplace features remain available.'
             )}
@@ -138,9 +149,7 @@ export default function PremiumScreen(): React.JSX.Element {
       </View>
 
       <View style={styles.card}>
-        {(paidPurchasesAvailable
-          ? BENEFITS
-          : BENEFITS.filter((line) => !line.startsWith('After free boosts'))).map((line) => (
+        {BENEFITS.map((line) => (
           <Text key={line} style={styles.benefit}>
             • {line}
           </Text>
@@ -152,9 +161,9 @@ export default function PremiumScreen(): React.JSX.Element {
           {benefitsLoading ? (
             <ActivityIndicator color={colors.premium} />
           ) : (
-            <BoostCreditsBanner
-              remaining={boostCreditsRemaining}
-              total={boostCreditsTotal || PREMIUM_FREE_BOOSTS_PER_MONTH}
+            <FeaturedCreditsBanner
+              remaining={featuredCreditsRemaining}
+              total={featuredCreditsTotal || PRO_SELLER_FEATURED_CREDITS_PER_MONTH}
             />
           )}
           <View style={styles.card}>
@@ -164,7 +173,7 @@ export default function PremiumScreen(): React.JSX.Element {
             </Text>
           </View>
           <Pressable style={styles.secondaryBtn} onPress={() => router.push('/my-listings')}>
-            <Text style={styles.secondaryText}>Go to My listings to boost</Text>
+            <Text style={styles.secondaryText}>Go to My listings to feature listings</Text>
           </Pressable>
           <Pressable
             style={[styles.portalBtn, (opening || !paidPurchasesAvailable) && styles.ctaDisabled]}
@@ -181,7 +190,7 @@ export default function PremiumScreen(): React.JSX.Element {
           </Pressable>
           <Text style={styles.portalHint}>
             {paidPurchasesAvailable
-              ? 'Opens Stripe billing portal to update payment method or cancel Premium.'
+              ? 'Opens Stripe billing portal to update payment method or cancel Pro Seller.'
               : 'Billing management is disabled on iOS until Apple In-App Purchase is implemented.'}
           </Text>
         </>
@@ -196,9 +205,7 @@ export default function PremiumScreen(): React.JSX.Element {
           ) : (
             <Text style={styles.ctaText}>
               {paidPurchasesAvailable ? (
-                <>
-              Subscribe — {formatUsdFromCents(PREMIUM_CHECKOUT.totalCents)}/mo
-                </>
+                <>Subscribe — {formatUsdFromCents(PRO_SELLER_CHECKOUT.totalCents)}/mo</>
               ) : (
                 'Unavailable on iOS'
               )}
@@ -208,23 +215,17 @@ export default function PremiumScreen(): React.JSX.Element {
       )}
 
       {paidPurchasesAvailable ? (
-      <Text style={styles.legal}>
-        Subscription renews monthly. By subscribing you agree to our{' '}
-        <Text
-          style={styles.legalLink}
-          onPress={() => void Linking.openURL(LEGAL_URLS.terms)}
-        >
-          Terms
-        </Text>{' '}
-        and{' '}
-        <Text
-          style={styles.legalLink}
-          onPress={() => void Linking.openURL(LEGAL_URLS.privacy)}
-        >
-          Privacy Policy
+        <Text style={styles.legal}>
+          Subscription renews monthly. By subscribing you agree to our{' '}
+          <Text style={styles.legalLink} onPress={() => void Linking.openURL(LEGAL_URLS.terms)}>
+            Terms
+          </Text>{' '}
+          and{' '}
+          <Text style={styles.legalLink} onPress={() => void Linking.openURL(LEGAL_URLS.privacy)}>
+            Privacy Policy
+          </Text>
+          .
         </Text>
-        .
-      </Text>
       ) : null}
     </ScrollView>
   );

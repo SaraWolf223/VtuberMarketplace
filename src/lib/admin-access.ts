@@ -30,7 +30,8 @@ export type AdminHubRoute =
   | '/admin/setup-status'
   | '/admin/security'
   | '/admin/bulletin'
-  | '/admin/support';
+  | '/admin/support'
+  | '/admin/strikes';
 
 /** Routes managers can access (moderation only). */
 const MANAGER_ROUTES = new Set<AdminHubRoute>([
@@ -42,6 +43,7 @@ const MANAGER_ROUTES = new Set<AdminHubRoute>([
   '/admin/security',
   '/admin/bulletin',
   '/admin/support',
+  '/admin/strikes',
 ]);
 
 export function canAccessAdminRoute(

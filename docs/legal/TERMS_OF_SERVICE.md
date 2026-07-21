@@ -1,4 +1,4 @@
-# Local Marketplace Terms of Service
+# VTuber Marketplace Terms of Service
 
 > **Pre-production draft.** This document has not been reviewed by a licensed attorney. Recommend licensed attorney review before commercial launch or major scaling. Not legal advice.
 
@@ -9,7 +9,7 @@
 
 ## 1. Agreement to these Terms
 
-These Terms of Service ("**Terms**") are a binding agreement between you and **[YOUR COMPANY LLC]** ("**Local Marketplace**," "**we**," "**us**," or the "**Platform**") governing your access to and use of the Local Marketplace mobile application, website, and related services (collectively, the "**Service**") — a global marketplace for pre-made digital VTuber assets (2D Live2D models, 3D/VRM/FBX models including VRChat avatars and props, PNGtuber models, accessories, and backgrounds/overlays).
+These Terms of Service ("**Terms**") are a binding agreement between you and **[YOUR COMPANY LLC]** ("**VTuber Marketplace**," "**we**," "**us**," or the "**Platform**") governing your access to and use of the VTuber Marketplace mobile application, website, and related services (collectively, the "**Service**") — a global marketplace for pre-made digital VTuber assets (2D Live2D models, 3D/VRM/FBX models including VRChat avatars and props, PNGtuber models, accessories, and backgrounds/overlays).
 
 **By creating an account, checking the acceptance box at sign-in, or using the Service, you agree to these Terms and to the documents incorporated by reference:**
 
@@ -27,11 +27,11 @@ We may update these Terms. We will post a new "Last updated" date and, when requ
 
 ---
 
-## 2. What Local Marketplace is (and is not) — our role as a facilitator
+## 2. What VTuber Marketplace is (and is not) — our role as a facilitator
 
-Local Marketplace is a **marketplace facilitator**: we operate the technology that lets independent sellers list pre-made digital VTuber assets and lets buyers discover, purchase, and download them. We connect buyers and sellers; we do not create, own, sell, or license the assets ourselves.
+VTuber Marketplace is a **marketplace facilitator**: we operate the technology that lets independent sellers list pre-made digital VTuber assets and lets buyers discover, purchase, and download them. We connect buyers and sellers; we do not create, own, sell, or license the assets ourselves.
 
-**Local Marketplace is not:**
+**VTuber Marketplace is not:**
 
 - The seller of any asset listed on the Service, and **not a party to the license** a buyer and seller enter into for that asset
 - A **merchant of record** for the underlying digital asset (Stripe, as payment processor, and the seller, as the party granting the license, are the substantive parties to the sale; see [§9](#9-payments-stripe-connect-and-commission))
@@ -39,7 +39,7 @@ Local Marketplace is a **marketplace facilitator**: we operate the technology th
 - An author, editor, or guarantor of any listing's OTU/P2U license text — see [§6](#6-listings-and-licensing-otu-vs-p2u)
 - An escrow agent, insurer, or guarantor of any transaction's outcome
 
-**Local Marketplace does not:**
+**VTuber Marketplace does not:**
 
 - Verify that a seller owns sufficient rights to sell a given asset, beyond the representations sellers make under the [Seller Agreement](./SELLER_AGREEMENT.md) and our moderation review
 - Guarantee that any listing, license, or download link is accurate, complete, non-infringing, or will remain available
@@ -54,7 +54,7 @@ This is a **marketplace-facilitator model, not a merchant/retailer model.** We d
 
 **There are inherent risks** in buying and selling digital goods created by independent third parties, including the risk that a listing misrepresents the asset, that a seller's rights in the underlying artwork or model are incomplete or disputed, that a download link becomes unavailable, or that a buyer misuses a license. You assume these risks when you use the Service.
 
-Local Marketplace provides seller verification steps, listing moderation, licensing disclosure, link-health monitoring, reporting tools, and a strike system (see [Seller Agreement §5](./SELLER_AGREEMENT.md)), but **we do not guarantee a safe, accurate, or successful transaction.**
+VTuber Marketplace provides seller verification steps, listing moderation, licensing disclosure, link-health monitoring, reporting tools, and a strike system (see [Seller Agreement §5](./SELLER_AGREEMENT.md)), but **we do not guarantee a safe, accurate, or successful transaction.**
 
 ---
 
@@ -86,13 +86,13 @@ Every listing on the Service must carry one of two seller-authored license types
 | **OTU** (One-Time-Use) | Full rights/copyright transfer to the buyer. The listing automatically delists after it sells. |
 | **P2U** (Pay-to-Use) | A non-exclusive usage license. The listing stays live and may be sold to multiple buyers. |
 
-**Sellers write their own license text.** Local Marketplace does not provide a mandatory platform license template, does not warrant that a listing's license text is legally sufficient or enforceable, and does not interpret or arbitrate license terms between a buyer and seller. The exact license text shown on a listing at the moment of purchase is captured verbatim into that order's `license_snapshot` and becomes the buyer's permanent record of what was purchased — see [Buyer Purchase Terms](./BUYER_PURCHASE_TERMS.md).
+**Sellers write their own license text.** VTuber Marketplace does not provide a mandatory platform license template, does not warrant that a listing's license text is legally sufficient or enforceable, and does not interpret or arbitrate license terms between a buyer and seller. The exact license text shown on a listing at the moment of purchase is captured verbatim into that order's `license_snapshot` and becomes the buyer's permanent record of what was purchased — see [Buyer Purchase Terms](./BUYER_PURCHASE_TERMS.md).
 
 Listings have **no fixed expiry.** A listing stays live until the seller unpublishes it, it sells under an OTU license, or it is automatically paused by our strike or link-health system (see [Seller Agreement §5](./SELLER_AGREEMENT.md)).
 
 Every listing requires **at least three (3) photos** and **exactly one validated YouTube demo video** before it can publish. See [Community Guidelines](./COMMUNITY_GUIDELINES.md) for full listing standards, prohibited content, and the mature-content policy.
 
-You retain ownership of your listing content. By posting, you grant Local Marketplace a **non-exclusive, worldwide, royalty-free license** to host, store, reproduce, display, and distribute your listing content (photos, description, embedded video, license text) **only to operate and promote the Service.** This license ends when the content is deleted, except as needed for backups, legal compliance, or moderation records.
+You retain ownership of your listing content. By posting, you grant VTuber Marketplace a **non-exclusive, worldwide, royalty-free license** to host, store, reproduce, display, and distribute your listing content (photos, description, embedded video, license text) **only to operate and promote the Service.** This license ends when the content is deleted, except as needed for backups, legal compliance, or moderation records.
 
 We may review, remove, hide, pause, or refuse any listing or account **at any time**, with or without notice, if we believe it violates these Terms, our Guidelines, or applicable law, or if it creates risk for users or the Platform.
 
@@ -100,7 +100,7 @@ We may review, remove, hide, pause, or refuse any listing or account **at any ti
 
 ## 7. Digital delivery: seller-hosted links only
 
-Local Marketplace is a **digital delivery marketplace with no platform-side file storage.** We never store, host, mirror, proxy, or back up the asset files that are bought and sold on the Service. Every listing's `download_url`, and every order's `deliverable_url`, point at hosting the **seller** controls and operates (their own file host, cloud storage, or download service).
+VTuber Marketplace is a **digital delivery marketplace with no platform-side file storage.** We never store, host, mirror, proxy, or back up the asset files that are bought and sold on the Service. Every listing's `download_url`, and every order's `deliverable_url`, point at hosting the **seller** controls and operates (their own file host, cloud storage, or download service).
 
 **We explicitly do not:**
 
@@ -130,7 +130,7 @@ All real-money payments on the Service are processed through **Stripe Connect Ex
 - The **buyer** is responsible for Stripe's payment-processing fee and any applicable tax, shown at checkout.
 - A seller must have `charges_enabled`, `payouts_enabled`, and a verified phone number on file before any listing of theirs can go live — see [Seller Agreement §1](./SELLER_AGREEMENT.md).
 
-Local Marketplace does not custody buyer or seller funds outside of Stripe's processing flow and is not a bank, money transmitter, or escrow agent.
+VTuber Marketplace does not custody buyer or seller funds outside of Stripe's processing flow and is not a bank, money transmitter, or escrow agent.
 
 ---
 
@@ -169,7 +169,7 @@ Automated signals (for example, a link failing repeated health checks, or many r
 
 ## 13. Third-party services
 
-The Service integrates with third parties, including **Google**, **Apple**, **Supabase**, **Stripe**, and the **YouTube Data API** (used to validate each listing's required demo video). Your use of those services may be subject to their own terms. Local Marketplace is not responsible for third-party outages or acts.
+The Service integrates with third parties, including **Google**, **Apple**, **Supabase**, **Stripe**, and the **YouTube Data API** (used to validate each listing's required demo video). Your use of those services may be subject to their own terms. VTuber Marketplace is not responsible for third-party outages or acts.
 
 ### 13.1 YouTube Terms of Service
 
@@ -177,13 +177,13 @@ Because every listing embeds a YouTube demo video and we call the YouTube Data A
 
 ### 13.2 Third-party file hosts (seller download links)
 
-Sellers deliver assets through links to third-party file hosts of their own choosing — for example, Google Drive, Dropbox, Mega, itch.io, or a personal web host — as described in [§7](#7-digital-delivery-seller-hosted-links-only). **Local Marketplace is not a party to, and disclaims all responsibility for, those third-party file hosts:** we do not control their uptime, terms, pricing, content-scanning practices, or account policies, and a seller's or buyer's use of any such host is governed solely by that host's own terms of service and privacy policy, not by us.
+Sellers deliver assets through links to third-party file hosts of their own choosing — for example, Google Drive, Dropbox, Mega, itch.io, or a personal web host — as described in [§7](#7-digital-delivery-seller-hosted-links-only). **VTuber Marketplace is not a party to, and disclaims all responsibility for, those third-party file hosts:** we do not control their uptime, terms, pricing, content-scanning practices, or account policies, and a seller's or buyer's use of any such host is governed solely by that host's own terms of service and privacy policy, not by us.
 
 ---
 
 ## 14. Intellectual property and copyright
 
-Local Marketplace names, logos, and app design are our property. Do not use our branding without permission.
+VTuber Marketplace names, logos, and app design are our property. Do not use our branding without permission.
 
 If you believe content on the Service infringes your copyright, follow the notice-and-takedown process in our [DMCA / Copyright Policy](./DMCA_COPYRIGHT_POLICY.md). We may remove or disable access to reported content and terminate repeat infringers.
 
@@ -228,13 +228,13 @@ Some jurisdictions do not allow certain limits; in those cases, our liability is
 
 ## 18. Indemnity
 
-**If you are a seller**, you agree to defend, indemnify, and hold harmless Local Marketplace from claims, damages, and expenses (including reasonable attorneys' fees) arising from:
+**If you are a seller**, you agree to defend, indemnify, and hold harmless VTuber Marketplace from claims, damages, and expenses (including reasonable attorneys' fees) arising from:
 
 - Any intellectual-property or licensing dispute arising from a listing you posted, including a claim that you did not own or control sufficient rights to sell the asset
 - Any breach of your representations that your content is not AI-generated and that your download link is accurate and functional
 - Your conduct or your violation of these Terms, the [Seller Agreement](./SELLER_AGREEMENT.md), or applicable law
 
-**All users** agree to defend, indemnify, and hold harmless Local Marketplace from claims, damages, and expenses arising from their content, their conduct, or their violation of these Terms or law.
+**All users** agree to defend, indemnify, and hold harmless VTuber Marketplace from claims, damages, and expenses arising from their content, their conduct, or their violation of these Terms or law.
 
 ---
 
@@ -256,7 +256,7 @@ Before filing any claim, starting arbitration, or filing suit, you agree to send
 
 ### 20.2 Agreement to arbitrate
 
-If informal resolution does not resolve the dispute, you and Local Marketplace agree that any dispute, claim, or controversy arising out of or relating to these Terms, the Service, or any transaction on the Service will be resolved by **binding individual arbitration**, rather than in court, except as set out in [§20.5](#205-small-claims-carve-out) and [§20.6](#206-30-day-opt-out).
+If informal resolution does not resolve the dispute, you and VTuber Marketplace agree that any dispute, claim, or controversy arising out of or relating to these Terms, the Service, or any transaction on the Service will be resolved by **binding individual arbitration**, rather than in court, except as set out in [§20.5](#205-small-claims-carve-out) and [§20.6](#206-30-day-opt-out).
 
 Arbitration will be administered by the **American Arbitration Association ("AAA")** under its **Consumer Arbitration Rules**, which are incorporated into this agreement by reference. The AAA's rules and forms are available at [adr.org](https://www.adr.org).
 
@@ -268,9 +268,9 @@ Arbitration will take place in **[YOUR COUNTY], [YOUR STATE]**, or another mutua
 
 **This section is a waiver of your right to participate in a class action. Read it carefully.**
 
-To the maximum extent permitted by law, **you and Local Marketplace agree that any arbitration or proceeding will be conducted only on an individual basis and not as a class, collective, consolidated, or representative action.** The arbitrator has no authority to combine more than one person's claims, to preside over any form of class or representative proceeding, or to award relief to anyone other than the individual party bringing the claim.
+To the maximum extent permitted by law, **you and VTuber Marketplace agree that any arbitration or proceeding will be conducted only on an individual basis and not as a class, collective, consolidated, or representative action.** The arbitrator has no authority to combine more than one person's claims, to preside over any form of class or representative proceeding, or to award relief to anyone other than the individual party bringing the claim.
 
-**You and Local Marketplace each also waive any right to a jury trial** for any claim not resolved through the process above.
+**You and VTuber Marketplace each also waive any right to a jury trial** for any claim not resolved through the process above.
 
 If this class/collective-action waiver is found unenforceable for a particular claim, that claim (and only that claim) will proceed in court, and the remainder of this arbitration agreement will still apply to the fullest extent possible.
 
@@ -289,7 +289,7 @@ Either party may instead bring an individual claim in **small-claims court** in 
 - **Email:** support@yourdomain.com (subject line: "Arbitration opt-out"), or
 - **Mail:** the designated address in [ENTITY.md](./ENTITY.md), once published
 
-Your notice must include your account username or email, and a clear statement that you wish to opt out of arbitration. If you timely opt out, neither you nor Local Marketplace will be required to arbitrate disputes between you, and instead the governing-law and venue terms in [§21](#21-governing-law) apply, but all other parts of these Terms (including the limitation of liability) remain in effect. Opting out does not affect any other Terms.
+Your notice must include your account username or email, and a clear statement that you wish to opt out of arbitration. If you timely opt out, neither you nor VTuber Marketplace will be required to arbitrate disputes between you, and instead the governing-law and venue terms in [§21](#21-governing-law) apply, but all other parts of these Terms (including the limitation of liability) remain in effect. Opting out does not affect any other Terms.
 
 ---
 
@@ -297,13 +297,13 @@ Your notice must include your account username or email, and a clear statement t
 
 These Terms are governed by the laws of **[YOUR STATE], United States**, without regard to conflict-of-law rules, except where preempted by federal law (including the Federal Arbitration Act) or, for a user who has validly opted out under [§20.6](#206-30-day-opt-out), except as set by the courts identified below.
 
-For any dispute not subject to arbitration (small-claims matters, or disputes from a user who opted out under §20.6), you and Local Marketplace agree that the dispute will be resolved exclusively in the **state or federal courts located in [YOUR COUNTY], [YOUR STATE]**, and you consent to personal jurisdiction in those courts.
+For any dispute not subject to arbitration (small-claims matters, or disputes from a user who opted out under §20.6), you and VTuber Marketplace agree that the dispute will be resolved exclusively in the **state or federal courts located in [YOUR COUNTY], [YOUR STATE]**, and you consent to personal jurisdiction in those courts.
 
 ---
 
 ## 22. General
 
-- **Entire agreement:** These Terms and incorporated documents are the entire agreement between you and Local Marketplace regarding the Service.
+- **Entire agreement:** These Terms and incorporated documents are the entire agreement between you and VTuber Marketplace regarding the Service.
 - **Severability:** If any provision is unenforceable, the rest remains in effect.
 - **No waiver:** Failure to enforce a provision is not a waiver.
 - **Assignment:** You may not assign these Terms; we may assign them in connection with a merger or sale.

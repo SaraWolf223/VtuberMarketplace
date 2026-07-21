@@ -1,42 +1,35 @@
-import { FOUNDING_FREE_BOOSTS_PER_MONTH } from '@/constants/founding';
 import { FREE_LISTINGS_PER_MONTH, PREMIUM_LISTINGS_PER_MONTH } from '@/constants/listings';
-import { PREMIUM_FREE_BOOSTS_PER_MONTH } from '@/constants/premium';
+import { PRO_SELLER_FEATURED_CREDITS_PER_MONTH } from '@/constants/pro-seller';
 import type { ProfileRow } from '@/features/profile/profile-service';
-import { isPremiumActive } from '@/features/monetization/premium-service';
+import {
+  isProSellerActive,
+  isProSellerOrLegacyPremium,
+  openProSellerBillingPortal,
+  syncProSellerAccount,
+  type SyncProSellerResult,
+} from '@/features/monetization/pro-seller-service';
 import { getSupabaseEnv, supabaseRestGet } from '@/lib/supabase-rest';
 
-type EdgeEnvelope<T> = {
-  ok: boolean;
-  data: T | null;
-  error: { code?: string; message?: string } | null;
-};
-
-type BoostCreditsRow = {
+type FeaturedCreditsRow = {
   credits_total: number;
   credits_used: number;
 };
 
-type PromoBoostRow = {
-  boosts_remaining: number | null;
-};
-
 export type SellerBenefits = {
+  pro_seller_active: boolean;
+  pro_seller_until: string | null;
+  /** @deprecated alias */
   premium_active: boolean;
+  /** @deprecated alias */
   premium_until: string | null;
-  is_founding_seller: boolean;
-  promo_boosts_remaining: number;
-  boost_credits: {
+  featured_credits: {
     period_start: string;
     credits_total: number;
     credits_used: number;
     credits_remaining: number;
   };
-  founding_boost_credits: {
-    period_start: string;
-    credits_total: number;
-    credits_used: number;
-    credits_remaining: number;
-  };
+  /** @deprecated use featured_credits */
+  boost_credits: SellerBenefits['featured_credits'];
   listings: {
     created_this_month: number;
     limit: number;
@@ -82,21 +75,35 @@ async function countListingsCreatedThisMonth(
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
-/** Load seller limits via PostgREST (same data as get-seller-benefits edge, without edge hop). */
+function readProSellerFields(profile: ProfileRow & {
+  is_pro_seller?: boolean | null;
+  pro_seller_until?: string | null;
+}) {
+  const proActive = isProSellerOrLegacyPremium(profile);
+  const until =
+    (proActive && profile.pro_seller_until) ||
+    (proActive && profile.premium_until) ||
+    null;
+  return { proActive, until };
+}
+
+/** Load seller limits via PostgREST (mirrors get_seller_dashboard_summary fields). */
 export async function fetchSellerBenefits(
   accessToken: string,
   userId: string,
   profile: ProfileRow
 ): Promise<SellerBenefits> {
   const periodStart = currentCreditPeriodStart();
-  const premiumActive = isPremiumActive(!!profile.is_premium, profile.premium_until);
-  const foundingActive = !!profile.is_founding_seller;
+  const { proActive, until } = readProSellerFields(profile as ProfileRow & {
+    is_pro_seller?: boolean | null;
+    pro_seller_until?: string | null;
+  });
 
-  let creditsTotal = PREMIUM_FREE_BOOSTS_PER_MONTH;
+  let creditsTotal = PRO_SELLER_FEATURED_CREDITS_PER_MONTH;
   let creditsUsed = 0;
-  if (premiumActive) {
-    const rows = await supabaseRestGet<BoostCreditsRow>(
-      `premium_boost_credits?user_id=eq.${userId}&period_start=eq.${periodStart}&select=credits_total,credits_used`,
+  if (proActive) {
+    const rows = await supabaseRestGet<FeaturedCreditsRow>(
+      `featured_listing_credits?user_id=eq.${userId}&period_start=eq.${periodStart}&select=credits_total,credits_used`,
       accessToken
     );
     if (rows[0]) {
@@ -105,44 +112,23 @@ export async function fetchSellerBenefits(
     }
   }
 
-  let foundingTotal = FOUNDING_FREE_BOOSTS_PER_MONTH;
-  let foundingUsed = 0;
-  if (foundingActive) {
-    const rows = await supabaseRestGet<BoostCreditsRow>(
-      `founding_boost_credits?user_id=eq.${userId}&period_start=eq.${periodStart}&select=credits_total,credits_used`,
-      accessToken
-    );
-    if (rows[0]) {
-      foundingTotal = rows[0].credits_total;
-      foundingUsed = rows[0].credits_used;
-    }
-  }
-
-  const promoRows = await supabaseRestGet<PromoBoostRow>(
-    `promo_redemptions?user_id=eq.${userId}&boosts_remaining=gt.0&select=boosts_remaining&order=redeemed_at.asc&limit=1`,
-    accessToken
-  );
-
   const listingsCreated = await countListingsCreatedThisMonth(accessToken, userId);
-  const listingLimit = premiumActive ? PREMIUM_LISTINGS_PER_MONTH : FREE_LISTINGS_PER_MONTH;
+  const listingLimit = proActive ? PREMIUM_LISTINGS_PER_MONTH : FREE_LISTINGS_PER_MONTH;
+
+  const credits = {
+    period_start: periodStart,
+    credits_total: creditsTotal,
+    credits_used: creditsUsed,
+    credits_remaining: proActive ? Math.max(0, creditsTotal - creditsUsed) : 0,
+  };
 
   return {
-    premium_active: premiumActive,
-    premium_until: profile.premium_until ?? null,
-    is_founding_seller: foundingActive,
-    promo_boosts_remaining: promoRows[0]?.boosts_remaining ?? 0,
-    boost_credits: {
-      period_start: periodStart,
-      credits_total: creditsTotal,
-      credits_used: creditsUsed,
-      credits_remaining: premiumActive ? Math.max(0, creditsTotal - creditsUsed) : 0,
-    },
-    founding_boost_credits: {
-      period_start: periodStart,
-      credits_total: foundingTotal,
-      credits_used: foundingUsed,
-      credits_remaining: foundingActive ? Math.max(0, foundingTotal - foundingUsed) : 0,
-    },
+    pro_seller_active: proActive,
+    pro_seller_until: until,
+    premium_active: proActive,
+    premium_until: until,
+    featured_credits: credits,
+    boost_credits: credits,
     listings: {
       created_this_month: listingsCreated,
       limit: listingLimit,
@@ -154,7 +140,7 @@ export async function fetchSellerBenefits(
   };
 }
 
-export type SyncPremiumResult = {
+export type SyncPremiumResult = SyncProSellerResult & {
   premium_active: boolean;
   premium_until: string | null;
 };
@@ -163,35 +149,16 @@ export async function syncPremiumAccount(
   accessToken: string,
   sessionId?: string
 ): Promise<SyncPremiumResult> {
-  const { url, key } = getSupabaseEnv();
-  const res = await fetch(`${url}/functions/v1/sync-premium`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      apikey: key,
-      Authorization: `Bearer ${accessToken}`,
-    },
-    body: JSON.stringify(sessionId ? { session_id: sessionId } : {}),
-  });
-
-  const json = (await res.json()) as EdgeEnvelope<SyncPremiumResult>;
-  if (json.ok && json.data) return json.data;
-  throw new Error(json.error?.message ?? 'Could not activate Premium');
+  const synced = await syncProSellerAccount(accessToken, sessionId);
+  return {
+    ...synced,
+    premium_active: synced.pro_seller_active ?? !!synced.premium_active,
+    premium_until: synced.pro_seller_until ?? synced.premium_until ?? null,
+  };
 }
 
 export async function openPremiumBillingPortal(accessToken: string): Promise<string> {
-  const { url, key } = getSupabaseEnv();
-  const res = await fetch(`${url}/functions/v1/create-premium-portal`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      apikey: key,
-      Authorization: `Bearer ${accessToken}`,
-    },
-    body: JSON.stringify({}),
-  });
-
-  const json = (await res.json()) as EdgeEnvelope<{ url: string }>;
-  if (json.ok && json.data?.url) return json.data.url;
-  throw new Error(json.error?.message ?? 'Could not open billing portal');
+  return openProSellerBillingPortal(accessToken);
 }
+
+export { isProSellerActive, isProSellerOrLegacyPremium };

@@ -8,10 +8,21 @@ const ENV_PATH = join(ROOT, '.env');
 const CONFIG_PATH = join(ROOT, '.buyer-setup.local.json');
 const DRY_RUN = process.argv.includes('--dry-run');
 const PUBLIC_KEYS = new Set([
-  'app_display_name', 'support_email', 'branding_colors', 'feed_radius_options', 'max_radius_miles',
+  'app_display_name',
+  'support_email',
+  'branding_colors',
+  'platform_fee_bps_free',
+  'platform_fee_bps_pro',
+  'featured_placement_duration_days',
+  'featured_placement_price_cents',
+  'link_health_grace_period_hours',
+  'strike_expiry_months',
+  'strike_ban_threshold',
 ]);
 const PLATFORM_KEYS = new Set([
-  'boost_duration_hours', 'boost_base_cents', 'reports_per_hour', 'pause_reports_24h', 'pause_reports_lifetime',
+  'reports_per_hour',
+  'pause_reports_24h',
+  'pause_reports_lifetime',
 ]);
 
 function parseEnv(text) {
@@ -28,7 +39,7 @@ function parseEnv(text) {
 
 function requireLocalFiles() {
   if (!existsSync(ENV_PATH)) throw new Error('Run `npm run setup` first; local .env is missing.');
-  if (!existsSync(CONFIG_PATH)) throw new Error('Run `npm run setup` and choose white-label defaults first.');
+  if (!existsSync(CONFIG_PATH)) throw new Error('Run `npm run setup` and choose platform defaults first.');
   const env = parseEnv(readFileSync(ENV_PATH, 'utf8'));
   const url = env.EXPO_PUBLIC_SUPABASE_URL?.replace(/\/$/, '');
   const serviceKey = env.SUPABASE_SERVICE_ROLE_KEY;
@@ -63,7 +74,7 @@ async function upsert(url, serviceKey, table, rows) {
 
 async function main() {
   const { url, serviceKey, config } = requireLocalFiles();
-  if (config.version !== 1) throw new Error('Unsupported buyer setup profile version.');
+  if (config.version !== 1) throw new Error('Unsupported platform setup profile version.');
   const publicRows = rowsFrom(config.publicAppConfig, PUBLIC_KEYS, 'publicAppConfig');
   const platformRows = rowsFrom(config.platformSettings, PLATFORM_KEYS, 'platformSettings');
   console.log(`Validated ${publicRows.length} public and ${platformRows.length} admin platform settings.`);
@@ -73,7 +84,7 @@ async function main() {
   }
   await upsert(url, serviceKey, 'public_app_config', publicRows);
   await upsert(url, serviceKey, 'platform_settings', platformRows);
-  console.log('Applied white-label and platform defaults. No secret was stored in either table.');
+  console.log('Applied platform branding and moderation defaults. No secret was stored in either table.');
   console.log('Finish logo upload, categories, and email templates from the MFA-protected Admin screens.');
 }
 

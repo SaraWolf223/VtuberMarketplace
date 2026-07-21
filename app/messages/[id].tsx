@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/lib/query-keys';
 import {
@@ -28,19 +28,13 @@ import {
 } from '@/features/messages/dm-service';
 import { ConversationActionsMenu } from '@/components/messages/ConversationActionsMenu';
 import { MessageBubble } from '@/components/messages/MessageBubble';
-import { ContactAgreementBanner } from '@/components/messages/ContactAgreementBanner';
-import { ThreadContactSheet } from '@/components/messages/ThreadContactSheet';
-import { useContactAgreement } from '@/hooks/useContactAgreement';
 import { ReportSheet } from '@/components/moderation/ReportSheet';
 import { blockUser } from '@/features/moderation/moderation-service';
 import { ReviewModal } from '@/components/reviews/ReviewModal';
 import { useListingReviewStatus } from '@/hooks/useListingReviewStatus';
 import { useCreateReview } from '@/hooks/useCreateReview';
 import { reviewProgressHint } from '@/features/reviews/review-eligibility';
-import {
-  MARK_LISTING_SOLD_ALERT,
-  MARK_LISTING_SOLD_BANNER_WARNING,
-} from '@/features/messages/mark-sold-copy';
+import { MARK_LISTING_SOLD_ALERT } from '@/features/messages/mark-sold-copy';
 import { formatListingPrice } from '@/utils/format-listing';
 import { spacing, radius } from '@/theme/tokens';
 import { useThemeColors } from '@/hooks/useThemeColors';
@@ -63,7 +57,6 @@ export default function ConversationScreen(): React.JSX.Element {
 
   const { detail, messages, isLoading, isError, error, refetch, sendMessage } = useConversationThread(id);
   const [draft, setDraft] = useState('');
-  const [contactOpen, setContactOpen] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
   const [reviewOpen, setReviewOpen] = useState(false);
   const [endingChat, setEndingChat] = useState(false);
@@ -75,47 +68,7 @@ export default function ConversationScreen(): React.JSX.Element {
     detail?.listing_status === 'paused_pending_review';
   const { data: reviewStatus } = useListingReviewStatus(detail?.listing_id, isBuyer);
   const createReview = useCreateReview();
-  const {
-    agreement: contactAgreement,
-    propose: proposeAgreement,
-    accept: acceptAgreement,
-  } = useContactAgreement(id);
   const verified = isEmailVerified(user, profile);
-  const contactUnlocked = contactAgreement?.contact_unlocked ?? false;
-  const dealReviewPromptedRef = useRef<string | null>(null);
-
-  const maybePromptDealReview = useCallback(
-    (agreement = contactAgreement) => {
-      if (
-        !detail ||
-        !isBuyer ||
-        !agreement?.contact_unlocked ||
-        agreement.agreement_type !== 'deal' ||
-        !reviewStatus ||
-        reviewStatus.has_review ||
-        !reviewStatus.can_review
-      ) {
-        return;
-      }
-      const key = `${detail.conversation_id}-deal`;
-      if (dealReviewPromptedRef.current === key) return;
-      dealReviewPromptedRef.current = key;
-      setReviewOpen(true);
-    },
-    [contactAgreement, detail, isBuyer, reviewStatus]
-  );
-
-  useEffect(() => {
-    maybePromptDealReview();
-  }, [maybePromptDealReview]);
-
-  const onDealAgreementSettled = () => {
-    if (detail?.listing_id) {
-      void queryClient.invalidateQueries({
-        queryKey: queryKeys.listingReviewStatus(detail.listing_id),
-      });
-    }
-  };
 
   const invalidateConversationLists = () => {
     if (user?.id) {
@@ -322,50 +275,6 @@ export default function ConversationScreen(): React.JSX.Element {
           </Pressable>
         ) : null}
 
-        <ContactAgreementBanner
-          agreement={contactAgreement}
-          otherName={detail.other_display_name}
-          isSeller={isSeller}
-          listingActive={listingActive}
-          markingSold={endingChat}
-          markSoldWarning={MARK_LISTING_SOLD_BANNER_WARNING}
-          onMarkSold={confirmMarkSoldAndEndChat}
-          proposing={proposeAgreement.isPending}
-          accepting={acceptAgreement.isPending}
-          onProposeDeal={() => {
-            proposeAgreement.mutate('deal', {
-              onSuccess: (data) => {
-                onDealAgreementSettled();
-                if (data.contact_unlocked) {
-                  setTimeout(() => maybePromptDealReview(data), 400);
-                }
-              },
-              onError: (e) => {
-                Alert.alert(
-                  'Could not propose',
-                  e instanceof Error ? e.message : 'Try again'
-                );
-              },
-            });
-          }}
-          onAccept={() => {
-            acceptAgreement.mutate(undefined, {
-              onSuccess: (data) => {
-                onDealAgreementSettled();
-                if (data.contact_unlocked) {
-                  setTimeout(() => maybePromptDealReview(data), 400);
-                }
-              },
-              onError: (e) => {
-                Alert.alert(
-                  'Could not accept',
-                  e instanceof Error ? e.message : 'Try again'
-                );
-              },
-            });
-          }}
-        />
-
         {isBuyer && reviewStatus && !reviewStatus.has_review ? (
           <View style={styles.reviewSection}>
             {reviewStatus.can_review ? (
@@ -383,28 +292,6 @@ export default function ConversationScreen(): React.JSX.Element {
         ) : null}
 
         <View style={[styles.composerRow, { paddingBottom: spacing.sm + insets.bottom }]}>
-          <Pressable
-            style={[styles.contactBtn, !contactUnlocked && styles.contactBtnLocked]}
-            onPress={() => {
-              if (!contactUnlocked) {
-                Alert.alert(
-                  'Accept the deal first',
-                  'Both of you must accept the deal above before calling or texting.'
-                );
-                return;
-              }
-              setContactOpen(true);
-            }}
-          >
-            <Text
-              style={[
-                styles.contactBtnText,
-                !contactUnlocked && styles.contactBtnTextLocked,
-              ]}
-            >
-              Call/Text
-            </Text>
-          </Pressable>
           <TextInput
             style={styles.input}
             value={draft}
@@ -450,25 +337,14 @@ export default function ConversationScreen(): React.JSX.Element {
       ) : null}
 
       {token ? (
-        <>
-          <ThreadContactSheet
-            visible={contactOpen}
-            onClose={() => setContactOpen(false)}
-            conversationId={detail.conversation_id}
-            listingTitle={detail.listing_title}
-            accessToken={token}
-            agreement={contactAgreement}
-            otherName={detail.other_display_name}
-          />
-          <ReportSheet
-            visible={reportOpen}
-            onClose={() => setReportOpen(false)}
-            accessToken={token}
-            targetType="user"
-            reportedUserId={detail.other_user_id}
-            title="Report user"
-          />
-        </>
+        <ReportSheet
+          visible={reportOpen}
+          onClose={() => setReportOpen(false)}
+          accessToken={token}
+          targetType="user"
+          reportedUserId={detail.other_user_id}
+          title="Report user"
+        />
       ) : null}
     </>
   );
@@ -553,13 +429,6 @@ const useStyles = createThemedStyles((colors) => StyleSheet.create({
     borderTopColor: colors.border,
     backgroundColor: colors.surface,
   },
-  contactBtn: {
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.sm,
-  },
-  contactBtnLocked: { opacity: 0.45 },
-  contactBtnText: { fontSize: fontSize.caption, color: colors.primary, fontWeight: fontWeight.semibold },
-  contactBtnTextLocked: { color: colors.textMuted },
   input: {
     flex: 1,
     minHeight: 40,

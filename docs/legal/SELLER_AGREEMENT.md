@@ -1,11 +1,11 @@
-# Local Marketplace Seller Agreement
+# VTuber Marketplace Seller Agreement
 
 > **Pre-production draft.** This document has not been reviewed by a licensed attorney. Recommend licensed attorney review before commercial launch or major scaling. Not legal advice.
 
 **Last updated:** [LAST UPDATED DATE — see docs/legal/ENTITY.md]  
 **Effective date:** [EFFECTIVE DATE — see docs/legal/ENTITY.md]
 
-This Seller Agreement is **incorporated into** our [Terms of Service](./TERMS_OF_SERVICE.md) and applies in addition to it whenever you list or sell a digital VTuber asset on Local Marketplace. If you only buy, this document does not apply to you — see the [Buyer Purchase Terms](./BUYER_PURCHASE_TERMS.md) instead.
+This Seller Agreement is **incorporated into** our [Terms of Service](./TERMS_OF_SERVICE.md) and applies in addition to it whenever you list or sell a digital VTuber asset on VTuber Marketplace. If you only buy, this document does not apply to you — see the [Buyer Purchase Terms](./BUYER_PURCHASE_TERMS.md) instead.
 
 ---
 
@@ -39,7 +39,7 @@ A false representation under this section is a material breach of these Terms an
 
 ## 3. Your license text — you author it, we don't
 
-Local Marketplace does **not** provide a mandatory or recommended license template. You are solely responsible for:
+VTuber Marketplace does **not** provide a mandatory or recommended license template. You are solely responsible for:
 
 - Writing the OTU or P2U license text that appears on your listing
 - Making sure that text accurately reflects what rights you are actually granting
@@ -54,7 +54,7 @@ We display whatever license text you write. We do not review it for legal suffic
 - There is **no platform-mandated price cap**. You set your own price, which must be greater than $0.
 - Every sale is processed as a **Stripe Connect Express destination charge**. The buyer pays your listed price plus Stripe's processing fee and any applicable tax.
 - The **platform commission** — **10%** of the sale for free-tier sellers, or **8%** for active Pro Seller subscribers — is deducted automatically as a **Stripe application fee** before funds reach your connected account. Both rates are admin-configurable and shown to you before you publish.
-- **Payout timing and schedule** are handled by Stripe Connect according to your account's payout settings, not by Local Marketplace directly.
+- **Payout timing and schedule** are handled by Stripe Connect according to your account's payout settings, not by VTuber Marketplace directly.
 - **Taxes are your responsibility.** If your sales meet the applicable IRS/Stripe reporting threshold, Stripe will issue you a **Form 1099-K**. You are solely responsible for reporting and paying any tax owed on your sales.
 
 ---
@@ -93,7 +93,7 @@ Pro Seller subscribers may create **seller-scoped promo codes** and **timed sale
 
 Buyers may only leave a review after a **completed (`fulfilled`) order** for your listing. You may not incentivize, solicit, or manipulate reviews. See [Community Guidelines](./COMMUNITY_GUIDELINES.md) for the full review-integrity policy.
 
-Local Marketplace does not mediate or arbitrate disputes over license interpretation, asset quality, or compatibility between you and a buyer. We may still act on reports that a listing violates these Terms or the Community Guidelines independent of any buyer/seller dispute.
+VTuber Marketplace does not mediate or arbitrate disputes over license interpretation, asset quality, or compatibility between you and a buyer. We may still act on reports that a listing violates these Terms or the Community Guidelines independent of any buyer/seller dispute.
 
 ---
 
@@ -113,7 +113,7 @@ Termination does not entitle you to a refund of platform fees already collected 
 
 ## 9. No employment or partnership
 
-Selling on Local Marketplace does **not** create an employment, agency, partnership, or joint-venture relationship between you and Local Marketplace. You are an independent seller responsible for your own business, tax, and legal compliance.
+Selling on VTuber Marketplace does **not** create an employment, agency, partnership, or joint-venture relationship between you and VTuber Marketplace. You are an independent seller responsible for your own business, tax, and legal compliance.
 
 ---
 

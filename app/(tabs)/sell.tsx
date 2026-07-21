@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   View,
   Text,
@@ -14,8 +14,7 @@ import { WebDesktopPage } from '@/components/web/WebDesktopPage';
 import { PageFooterAds } from '@/components/ads/PageFooterAds';
 import { ThemedTextInput } from '@/components/ui/ThemedTextInput';
 import { useAuth } from '@/hooks/useAuth';
-import { useLocationPrefs } from '@/hooks/useLocationPrefs';
-import { useDraftListingStore } from '@/stores/draft-listing-store';
+import { useDraftListingStore, type AssetType } from '@/stores/draft-listing-store';
 import { compressListingPhoto } from '@/lib/image-compress';
 import {
   pickListingPhotosFromLibrary,
@@ -45,8 +44,28 @@ import { useThemedInputStyles } from '@/theme/useThemedInputStyles';
 import { fontSize, fontWeight } from '@/theme/typography';
 import { showAlert } from '@/lib/cross-platform-alert';
 
-const ALL_STEPS = ['Photos', 'Thumbnail', 'Details', 'ZIP', 'Publish'] as const;
+const ALL_STEPS = ['Photos', 'Thumbnail', 'Details', 'Asset', 'License', 'Publish'] as const;
 type FlowStep = (typeof ALL_STEPS)[number];
+
+const ASSET_OPTIONS = [
+  { id: 'live2d_2d', label: 'Live2D (2D)' },
+  { id: 'model_3d', label: '3D model' },
+  { id: 'pngtuber', label: 'PNGtuber' },
+  { id: 'accessory_prop', label: 'Accessory / prop' },
+  { id: 'background_overlay', label: 'Background / overlay' },
+  { id: 'base_model', label: 'Base model' },
+  { id: 'other', label: 'Other' },
+] as const;
+
+const SOFTWARE_OPTIONS = [
+  'VTube Studio',
+  'VRChat',
+  'VSeeFace',
+  'VNyan',
+  'ChilloutVR',
+  'Resonite',
+  'OBS',
+];
 
 export default function SellScreen(): React.JSX.Element {
   const styles = useStyles();
@@ -55,7 +74,6 @@ export default function SellScreen(): React.JSX.Element {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { user, session } = useAuth();
-  const { homeZip } = useLocationPrefs();
   const { requireVerification } = usePhoneVerificationGate();
   const draft = useDraftListingStore();
   const listingCategories = useListingCategories();
@@ -64,11 +82,7 @@ export default function SellScreen(): React.JSX.Element {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const isEditing = !!draft.editListingId;
   const { listingsRemaining, listingsLimit, premiumActive } = useSellerBenefits();
-  const homeZipClean = homeZip.replace(/\D/g, '').slice(0, 5);
-  const skipZipStep = !isEditing && homeZipClean.length === 5;
-  const flowSteps: readonly FlowStep[] = skipZipStep
-    ? ['Photos', 'Thumbnail', 'Details', 'Publish']
-    : ALL_STEPS;
+  const flowSteps: readonly FlowStep[] = ALL_STEPS;
 
   const step = Math.min(draft.step, flowSteps.length - 1);
   const currentStep = flowSteps[step];
@@ -141,32 +155,36 @@ export default function SellScreen(): React.JSX.Element {
     if (currentStep === 'Details') {
       if (!validateDetailsFields()) return;
     }
-    if (currentStep === 'ZIP') {
-      const zip = draft.zipCode.replace(/\D/g, '').slice(0, 5);
-      if (zip.length !== 5) {
-        showAlert('ZIP', 'Enter a valid 5-digit US ZIP.');
+    if (currentStep === 'Asset') {
+      if (!draft.assetType) {
+        showAlert('Asset type', 'Select an asset type.');
         return;
       }
-      draft.setZipCode(zip);
+    }
+    if (currentStep === 'License') {
+      if (draft.licenseText.trim().length < 20) {
+        showAlert('License', 'Write your license terms (at least 20 characters).');
+        return;
+      }
+      if (!/^https?:\/\//i.test(draft.downloadUrl.trim())) {
+        showAlert('Download link', 'Enter an http(s) URL to your hosted asset file.');
+        return;
+      }
+      if (!draft.youtubeUrl.trim()) {
+        showAlert('YouTube', 'Add a YouTube demo video URL.');
+        return;
+      }
     }
     draft.setStep(Math.min(step + 1, flowSteps.length - 1));
   };
 
   const validateDetailsFields = (): boolean => {
     const price = parsePriceInput(draft.priceText);
-    const parsed = listingSchema.safeParse({
-      title: draft.title,
-      description: draft.description || undefined,
-      price: price ?? NaN,
-      category: draft.category ?? undefined,
-      zip_code: draft.zipCode || homeZipClean,
-    });
-    if (!parsed.success) {
+    if (!draft.title.trim() || price == null || price <= 0 || !draft.category) {
       const next: Record<string, string> = {};
-      for (const issue of parsed.error.errors) {
-        const key = String(issue.path[0] ?? 'form');
-        if (!next[key]) next[key] = issue.message;
-      }
+      if (!draft.title.trim()) next.title = 'Title is required';
+      if (price == null || price <= 0) next.price = 'Price must be greater than $0';
+      if (!draft.category) next.category = 'Pick a category';
       setFieldErrors(next);
       return false;
     }
@@ -195,7 +213,16 @@ export default function SellScreen(): React.JSX.Element {
       description: draft.description || undefined,
       price: price ?? NaN,
       category: draft.category,
-      zip_code: draft.zipCode || homeZip,
+      asset_type: draft.assetType ?? undefined,
+      license_type: draft.licenseType,
+      license_text: draft.licenseText,
+      download_url: draft.downloadUrl.trim(),
+      youtube_video_url: draft.youtubeUrl.trim(),
+      is_mature: draft.isMature,
+      support_duration: draft.supportDuration,
+      compatible_software: draft.compatibleSoftware,
+      file_formats: draft.fileFormats,
+      includes_source_files: draft.includesSourceFiles,
     });
 
     if (!parsed.success) {
@@ -222,8 +249,8 @@ export default function SellScreen(): React.JSX.Element {
       showAlert(
         'Monthly limit reached',
         premiumActive
-          ? `Premium sellers can post ${listingsLimit} listings per month.`
-          : `Free accounts can post ${listingsLimit} listings per month. Upgrade to Premium for ${PREMIUM_LISTINGS_PER_MONTH} posts.`
+          ? `Pro Seller accounts can post ${listingsLimit} listings per month.`
+          : `Free accounts can post ${listingsLimit} listings per month. Upgrade to Pro Seller for ${PREMIUM_LISTINGS_PER_MONTH} posts.`
       );
       return;
     }
@@ -296,31 +323,19 @@ export default function SellScreen(): React.JSX.Element {
     }
   };
 
-  useEffect(() => {
-    if (!draft.zipCode && homeZip) {
-      draft.setZipCode(homeZip);
-    }
-    // Deliberately narrow deps to the two fields this effect actually reads/calls (both
-    // listed above) instead of the whole `draft` object — `useDraftListingStore()` returns a
-    // new object reference on every store field change (title, price, photos, ...), so
-    // depending on `draft` itself would re-run this on every keystroke elsewhere in the form.
-    // `setZipCode` is a stable action reference from the store, so this is safe.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [homeZip, draft.zipCode, draft.setZipCode]);
-
   return (
     <WebDesktopPage title="Post a listing" subtitle="List a digital VTuber asset for sale">
       <ScreenScrollView contentContainerStyle={styles.container}>
       <Text style={styles.heading}>{isEditing ? 'Edit listing' : 'Post a listing'}</Text>
       {isEditing ? (
         <Text style={styles.hint}>
-          Photos stay as-is for now. Update details, ZIP, then save.
+          Photos stay as-is for now. Update details and license, then save.
         </Text>
       ) : null}
       {!isEditing ? (
         <Text style={styles.quotaHint}>
           {listingsRemaining} of {listingsLimit} listings left this month
-          {premiumActive ? ' (Premium)' : ''}
+          {premiumActive ? ' (Pro Seller)' : ''}
         </Text>
       ) : null}
       <Text style={styles.stepLabel}>
@@ -476,19 +491,126 @@ export default function SellScreen(): React.JSX.Element {
         </View>
       ) : null}
 
-      {currentStep === 'ZIP' ? (
+      {currentStep === 'Asset' ? (
         <View style={styles.section}>
+          <Text style={styles.label}>Asset type</Text>
+          <View style={styles.chips}>
+            {ASSET_OPTIONS.map((opt) => (
+              <Pressable
+                key={opt.id}
+                style={[styles.chip, draft.assetType === opt.id && styles.chipActive]}
+                onPress={() => draft.setAssetType(opt.id as AssetType)}
+              >
+                <Text style={[styles.chipText, draft.assetType === opt.id && styles.chipTextActive]}>
+                  {opt.label}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+          <Text style={styles.label}>Compatible software</Text>
+          <View style={styles.chips}>
+            {SOFTWARE_OPTIONS.map((name) => {
+              const selected = draft.compatibleSoftware.includes(name);
+              return (
+                <Pressable
+                  key={name}
+                  style={[styles.chip, selected && styles.chipActive]}
+                  onPress={() => {
+                    draft.setCompatibleSoftware(
+                      selected
+                        ? draft.compatibleSoftware.filter((s) => s !== name)
+                        : [...draft.compatibleSoftware, name]
+                    );
+                  }}
+                >
+                  <Text style={[styles.chipText, selected && styles.chipTextActive]}>{name}</Text>
+                </Pressable>
+              );
+            })}
+          </View>
+          <Text style={styles.label}>Support duration</Text>
+          <View style={styles.chips}>
+            {(
+              [
+                ['none', 'None'],
+                ['days_30', '30 days'],
+                ['days_90', '90 days'],
+                ['lifetime', 'Lifetime'],
+              ] as const
+            ).map(([id, label]) => (
+              <Pressable
+                key={id}
+                style={[styles.chip, draft.supportDuration === id && styles.chipActive]}
+                onPress={() => draft.setSupportDuration(id)}
+              >
+                <Text
+                  style={[styles.chipText, draft.supportDuration === id && styles.chipTextActive]}
+                >
+                  {label}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+          <Pressable
+            style={[styles.chip, draft.isMature && styles.chipActive, { alignSelf: 'flex-start' }]}
+            onPress={() => draft.setIsMature(!draft.isMature)}
+          >
+            <Text style={[styles.chipText, draft.isMature && styles.chipTextActive]}>
+              Mature content (age-gated)
+            </Text>
+          </Pressable>
+        </View>
+      ) : null}
+
+      {currentStep === 'License' ? (
+        <View style={styles.section}>
+          <Text style={styles.label}>License type</Text>
+          <View style={styles.chips}>
+            <Pressable
+              style={[styles.chip, draft.licenseType === 'otu' && styles.chipActive]}
+              onPress={() => draft.setLicenseType('otu')}
+            >
+              <Text style={[styles.chipText, draft.licenseType === 'otu' && styles.chipTextActive]}>
+                OTU (rights transfer)
+              </Text>
+            </Pressable>
+            <Pressable
+              style={[styles.chip, draft.licenseType === 'p2u' && styles.chipActive]}
+              onPress={() => draft.setLicenseType('p2u')}
+            >
+              <Text style={[styles.chipText, draft.licenseType === 'p2u' && styles.chipTextActive]}>
+                P2U (non-exclusive)
+              </Text>
+            </Pressable>
+          </View>
           <Text style={styles.hint}>
-            Buyers see listings near this ZIP. Defaults to your home ZIP ({homeZipClean || 'not set'}
-            ).
+            You write your own license terms. The platform snapshots them at checkout.
           </Text>
-          <Text style={styles.label}>Listing ZIP</Text>
+          <Text style={styles.label}>License terms</Text>
           <ThemedTextInput
-            value={draft.zipCode || homeZip}
-            onChangeText={draft.setZipCode}
-            keyboardType="number-pad"
-            maxLength={5}
-            placeholder="e.g. 10001"
+            style={inputStyles.multiline}
+            value={draft.licenseText}
+            onChangeText={draft.setLicenseText}
+            multiline
+            placeholder="Usage rights, credit requirements, commercial use…"
+          />
+          <Text style={styles.label}>Download URL (seller-hosted)</Text>
+          <ThemedTextInput
+            value={draft.downloadUrl}
+            onChangeText={draft.setDownloadUrl}
+            autoCapitalize="none"
+            placeholder="https://drive.google.com/… or Dropbox ?dl=1"
+          />
+          <Text style={styles.hint}>
+            Host the file yourself. Link must be shareable without an access request. Platform never
+            stores asset files.
+          </Text>
+          <Text style={styles.label}>YouTube demo URL (required)</Text>
+          <ThemedTextInput
+            value={draft.youtubeUrl}
+            onChangeText={draft.setYoutubeUrl}
+            autoCapitalize="none"
+            placeholder="https://www.youtube.com/watch?v=…"
           />
         </View>
       ) : null}
@@ -500,8 +622,8 @@ export default function SellScreen(): React.JSX.Element {
             ${(parsePriceInput(draft.priceText) ?? 0).toFixed(2)}
           </Text>
           <Text style={styles.previewMeta}>
-            {draft.category ? categoryLabel(draft.category) : ''} · ZIP{' '}
-            {draft.zipCode || homeZip}
+            {draft.category ? categoryLabel(draft.category) : ''} ·{' '}
+            {draft.licenseType.toUpperCase()} · {draft.assetType ?? 'asset'}
           </Text>
           <Text style={styles.previewMeta}>{draft.photos.length} photo(s)</Text>
           {draft.description ? (

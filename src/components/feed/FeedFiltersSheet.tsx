@@ -100,6 +100,9 @@ export function FeedFiltersSheet({ visible, onClose }: Props): React.JSX.Element
     listingStatus,
     publishedAfter,
     minSellerRating,
+    licenseType,
+    hasCustomization,
+    hasSetup,
     setCategory,
     setMaxPrice,
     setSort,
@@ -107,6 +110,9 @@ export function FeedFiltersSheet({ visible, onClose }: Props): React.JSX.Element
     setPublishedAfter,
     setPublishedBefore,
     setMinSellerRating,
+    setLicenseType,
+    setHasCustomization,
+    setHasSetup,
     reset,
   } = useFeedFiltersStore();
 
@@ -258,6 +264,48 @@ export function FeedFiltersSheet({ visible, onClose }: Props): React.JSX.Element
                     compact
                   />
                 ))}
+              </View>
+            </FilterSection>
+
+            <FilterSection title="License">
+              <View style={styles.tileRow}>
+                {(
+                  [
+                    [null, 'Any'],
+                    ['otu', 'OTU'],
+                    ['p2u', 'P2U'],
+                  ] as const
+                ).map(([id, label]) => (
+                  <FilterIconTile
+                    key={label}
+                    label={label}
+                    icon="document-text-outline"
+                    selected={licenseType === id}
+                    onPress={() => setLicenseType(id)}
+                    compact
+                  />
+                ))}
+              </View>
+            </FilterSection>
+
+            <FilterSection title="Add-ons">
+              <View style={styles.tileRow}>
+                <FilterIconTile
+                  label="Customization"
+                  icon="color-palette-outline"
+                  selected={hasCustomization === true}
+                  onPress={() =>
+                    setHasCustomization(hasCustomization === true ? null : true)
+                  }
+                  compact
+                />
+                <FilterIconTile
+                  label="Setup"
+                  icon="construct-outline"
+                  selected={hasSetup === true}
+                  onPress={() => setHasSetup(hasSetup === true ? null : true)}
+                  compact
+                />
               </View>
             </FilterSection>
           </WebVerticalScroll>

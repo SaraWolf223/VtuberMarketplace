@@ -118,7 +118,7 @@ Budget is typically small, so spend it on **micro/nano creators** and your own c
 
 - **Founding Sellers** get a badge + comped Premium; spotlight them.
 - Respond to every report/DM fast; visible moderation builds trust at low prices.
-- Lightweight rituals: "find of the day," seller leaderboard, meetup safety tips from [MEETUP_SAFETY](./legal/MEETUP_SAFETY.md).
+- Lightweight rituals: featured creator spotlights, seller leaderboard, purchase-verified review highlights.
 - Avoid stretching the product thin — **no dedicated social feed in MVP**; community lives in the listings + creator content, not a new surface.
 
 ---

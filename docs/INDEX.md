@@ -1,4 +1,4 @@
-# Local Marketplace — Documentation Index
+# VTuber Marketplace — Documentation Index
 
 **Purpose:** Master index for Cursor AI Auto Mode. Read documents in order during implementation.
 
@@ -14,7 +14,7 @@
 | **Maintain stores / security** | [27-Platform_Maintenance_Runbook.md](./27-Platform_Maintenance_Runbook.md) |
 | Founder / PM | [01-PRD.md](./01-PRD.md), [20-Seed_Content_Strategy.md](./20-Seed_Content_Strategy.md) |
 | Cursor Auto Mode | [08-Cursor_Prompts.md](./08-Cursor_Prompts.md), [AGENTS.md](../AGENTS.md) |
-| New developer | [00-Developer_Setup.md](./00-Developer_Setup.md), [36-Reskinning_Guide.md](./36-Reskinning_Guide.md) |
+| New developer | [00-Developer_Setup.md](./00-Developer_Setup.md) |
 | Legal (pre-launch) | [legal/README.md](./legal/README.md) |
 
 ---
@@ -22,12 +22,12 @@
 ## How to use this stack
 
 1. Read **01-PRD.md** once before any coding.
-2. Complete **00-Developer_Setup.md** (Supabase, Stripe, Mapbox accounts).
+2. Complete **00-Developer_Setup.md** (Supabase, Stripe, YouTube Data API accounts).
 3. Apply **02-Cursor_Rules.md** via `.cursor/rules/`.
 4. Implement backend: **03** → **04** → **05** → **21**.
 5. Implement frontend: **06** → **07** → **22** (flows).
 6. Execute builds: **08-Cursor_Prompts.md** (one prompt per task).
-7. Cross-reference domain docs **09–14** when touching those systems.
+7. Cross-reference domain docs **10–14** when touching those systems (doc **09** is retired).
 8. Use **15** to reject scope creep.
 9. Before launch: **16–18**, publish **legal/**, run **17**.
 
@@ -40,7 +40,6 @@
 | File | Purpose |
 |------|---------|
 | [00-Developer_Setup.md](./00-Developer_Setup.md) | Accounts, env vars, first run |
-| [36-Reskinning_Guide.md](./36-Reskinning_Guide.md) | End-to-end buyer reskinning and white-label checklist |
 | [../AGENTS.md](../AGENTS.md) | Cursor agent entry point |
 | [../CONTRIBUTING.md](../CONTRIBUTING.md) | Workflow for changes |
 | [../CHANGELOG.md](../CHANGELOG.md) | Doc/code history |
@@ -62,7 +61,7 @@
 
 | # | File | Topic |
 |---|------|-------|
-| 09 | [09-Search_and_Radius_System.md](./09-Search_and_Radius_System.md) | Geo feed |
+| 09 | [09-Search_and_Radius_System.md](./09-Search_and_Radius_System.md) | **RETIRED** — geo feed stub (see `01-PRD.md` §10) |
 | 10 | [10-Monetization_System.md](./10-Monetization_System.md) | Stripe, ads |
 | 11 | [11-Storage_and_Deletion_System.md](./11-Storage_and_Deletion_System.md) | Images, expiry |
 | 12 | [12-Moderation_and_Safety.md](./12-Moderation_and_Safety.md) | Reports, bans |
@@ -89,8 +88,6 @@
 | 29 | [29-Web_QA_Checklist.md](./29-Web_QA_Checklist.md) | Web (desktop + mobile browser) QA checklist |
 | 31 | [31-Launch_and_Growth_Plan.md](./31-Launch_and_Growth_Plan.md) | **Reusable local-launch playbook: seeding supply, creator marketing, metrics gates** |
 | 34 | [34-Store_Accounts_and_Launch_Readiness.md](./34-Store_Accounts_and_Launch_Readiness.md) | **Google Play + Apple Dev account setup (D-U-N-S/org), closed beta, staff/admin + waitlist email notifications** |
-| 35 | [35-Included_Landing_Page.md](./35-Included_Landing_Page.md) | **Buyer landing page contents, safe configuration, branding, and deployment** |
-| 36 | [36-Reskinning_Guide.md](./36-Reskinning_Guide.md) | **Buyer reskinning: identity, assets, runtime branding, landing page, legal, builds, and QA** |
 
 ### Reference notes
 
@@ -127,7 +124,7 @@ Setup     → 00-Developer_Setup.md
 Phase A   → 08 prompt 00, 01
 Phase B   → 08 prompts 02, 03
 Phase C   → 08 prompts 04, 05 + docs 03, 11
-Phase D   → 08 prompt 06 + doc 09
+Phase D   → 08 prompt 06 + doc 03 (discovery filters — doc 09 retired)
 Phase E   → 08 prompts 07, 08
 Phase F   → 08 prompts 09, 10, 11 + doc 10
 Phase G   → 08 prompts 12, 13 + docs 12, 11
@@ -140,12 +137,12 @@ Launch    → legal/*, 20, 24
 ## Hard constraints (never violate)
 
 - No fixed max listing price — price must be greater than $0
-- Max images per listing: **5**
-- Max image size after compression: **2 MB**
-- In-app DM is shipped (phone-verified senders, rate-limited, banned-keyword filtered); SMS / phone reveal remain as lower-friction alternatives — see [01-PRD.md](./01-PRD.md) §5.4
-- No shipping, escrow, or item payment processing
-- Listings expire after **21 days** (standard) or **2 months** (Premium); hard delete **7 days after expiry**
-- Launch marketing: **one city at a time**
+- Every listing requires ≥3 photos and exactly one validated YouTube demo video before publish
+- **Real payments via Stripe Connect Express** — tiered platform commission (10% free / 8% Pro Seller)
+- **Digital delivery only** — seller-hosted links; the platform never stores asset files
+- **OTU or P2U licensing** on every listing; seller-authored license text snapshotted at checkout
+- **Global catalog** — no ZIP/radius geo discovery (`09-Search_and_Radius_System.md` is retired)
+- Purchase-verified reviews only; DMs require email verification — see [01-PRD.md](./01-PRD.md)
 
 ---
 

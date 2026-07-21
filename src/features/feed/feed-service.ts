@@ -34,6 +34,9 @@ export async function fetchFeedPage(
       p_published_after: params.publishedAfter,
       p_published_before: params.publishedBefore,
       p_min_seller_rating: params.minSellerRating,
+      p_license_type: params.licenseType,
+      p_has_customization: params.hasCustomization,
+      p_has_setup: params.hasSetup,
     },
     accessToken,
     20000

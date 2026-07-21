@@ -50,4 +50,7 @@ export type FeedQueryParams = {
   publishedAfter: string | null;
   publishedBefore: string | null;
   minSellerRating: number | null;
+  licenseType: 'otu' | 'p2u' | null;
+  hasCustomization: boolean | null;
+  hasSetup: boolean | null;
 };

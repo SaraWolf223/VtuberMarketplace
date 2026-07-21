@@ -11,18 +11,18 @@ import {
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMyListings } from '@/hooks/useMyListings';
-import { useBoostListing } from '@/hooks/useBoostListing';
+import { useFeaturedListing } from '@/hooks/useFeaturedListing';
 import { useSellerBenefits } from '@/hooks/useSellerBenefits';
-import { useProfile } from '@/hooks/useProfile';
 import { MyListingRow } from '@/components/listing/MyListingRow';
-import { BoostCreditsBanner } from '@/components/monetization/BoostCreditsBanner';
+import { FeaturedCreditsBanner } from '@/components/monetization/BoostCreditsBanner';
+import { SellerStrikeNotice } from '@/components/strikes/SellerStrikeNotice';
 import { ErrorRetry } from '@/components/ui/ErrorRetry';
 import { canUseStripePaidMonetization } from '@/features/monetization/platform-payments';
 import { useDraftListingStore } from '@/stores/draft-listing-store';
 import type { MyListingStatus } from '@/types/my-listings';
-import { PREMIUM_FREE_BOOSTS_PER_MONTH } from '@/constants/premium';
-import { FOUNDING_FREE_BOOSTS_PER_MONTH } from '@/constants/founding';
-import { LISTING_EXPIRY_HINT } from '@/constants/listing-lifecycle';
+import { PRO_SELLER_FEATURED_CREDITS_PER_MONTH } from '@/constants/pro-seller';
+import { FEATURED_CHECKOUT, formatUsdFromCents } from '@/constants/stripe-fees';
+import { FEATURED_PLACEMENT_DURATION_DAYS } from '@/constants/pro-seller';
 import { spacing, radius } from '@/theme/tokens';
 import { useThemeColors } from '@/hooks/useThemeColors';
 import { createThemedStyles } from '@/theme/useThemedStyles';
@@ -43,26 +43,13 @@ export default function MyListingsScreen(): React.JSX.Element {
   const { data, isLoading, isError, refetch, isRefetching, markSold, removeListing, isMarkingSold, isDeleting } =
     useMyListings(tab);
   const loadForEdit = useDraftListingStore((s) => s.loadForEdit);
-  const { boostListing, boostingId } = useBoostListing();
-  const { data: profile } = useProfile();
+  const { featureListing, featuringId } = useFeaturedListing();
   const {
-    premiumActive,
-    isFoundingSeller: benefitsFounding,
-    boostCreditsRemaining: freeBoosts,
-    boostCreditsTotal,
-    foundingBoostsRemaining,
-    foundingBoostsTotal,
-    promoBoostsRemaining,
+    proSellerActive,
+    featuredCreditsRemaining,
+    featuredCreditsTotal,
   } = useSellerBenefits();
-  const paidBoostsAvailable = canUseStripePaidMonetization();
-
-  const isFoundingSeller = benefitsFounding || !!profile?.is_founding_seller;
-  const foundingRemaining =
-    foundingBoostsRemaining ||
-    (isFoundingSeller && !benefitsFounding ? FOUNDING_FREE_BOOSTS_PER_MONTH : 0);
-  const foundingTotal =
-    foundingBoostsTotal ||
-    (isFoundingSeller ? FOUNDING_FREE_BOOSTS_PER_MONTH : 0);
+  const paidFeaturedAvailable = canUseStripePaidMonetization();
 
   useEffect(() => {
     if (tabParam === 'active' || tabParam === 'sold' || tabParam === 'expired') {
@@ -70,53 +57,37 @@ export default function MyListingsScreen(): React.JSX.Element {
     }
   }, [tabParam]);
 
-  const confirmBoostFree = (id: string, title: string) => {
+  const confirmFeatureCredit = (id: string, title: string) => {
     Alert.alert(
-      'Use a free Premium boost?',
-      `Uses 1 of ${freeBoosts} free boosts left this month (${PREMIUM_FREE_BOOSTS_PER_MONTH} per month). Ranks higher for 24h; adds 14 days if expiring within a week.`,
+      'Use a Pro Seller Featured credit?',
+      `Uses 1 of ${featuredCreditsRemaining} credits left this month (${PRO_SELLER_FEATURED_CREDITS_PER_MONTH} per month). Featured listings rank higher for ${FEATURED_PLACEMENT_DURATION_DAYS} days.`,
       [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Boost free', onPress: () => boostListing(id, title, 'free') },
+        { text: 'Feature', onPress: () => featureListing(id, title, 'credit') },
       ]
     );
   };
 
-  const confirmBoostFounding = (id: string, title: string) => {
-    Alert.alert(
-      'Use a Founding Seller boost?',
-      `Uses 1 of ${foundingRemaining} free boosts left this month (${FOUNDING_FREE_BOOSTS_PER_MONTH} per month for Founding Sellers).`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Boost free', onPress: () => boostListing(id, title, 'founding') },
-      ]
-    );
-  };
-
-  const confirmBoostPromo = (id: string, title: string) => {
-    Alert.alert(
-      'Use a promo boost?',
-      `Uses 1 of ${promoBoostsRemaining} promo boost${promoBoostsRemaining === 1 ? '' : 's'} left. Ranks higher for 24h.`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Boost with promo', onPress: () => boostListing(id, title, 'promo') },
-      ]
-    );
-  };
-
-  const confirmBoostPaid = (id: string, title: string) => {
-    if (!paidBoostsAvailable) {
-      Alert.alert('Purchases unavailable on iOS', 'Paid boosts are disabled on iOS until Apple In-App Purchase is implemented.');
+  const confirmFeaturePaid = (id: string, title: string) => {
+    if (!paidFeaturedAvailable) {
+      Alert.alert(
+        'Purchases unavailable on iOS',
+        'Paid Featured placements are disabled on iOS until Apple In-App Purchase is implemented.'
+      );
       return;
     }
 
     Alert.alert(
-      'Boost listing for $1?',
-      freeBoosts > 0
-        ? 'Paid boost — does not use Premium credits. Ranks higher 24h; adds 14 days if expiring within a week.'
-        : 'Ranks higher for 24 hours. Adds 14 days to listing life if expiring within a week.',
+      `Feature listing for ${formatUsdFromCents(FEATURED_CHECKOUT.totalCents)}?`,
+      featuredCreditsRemaining > 0
+        ? `Paid placement — does not use Pro Seller credits. Ranks higher for ${FEATURED_PLACEMENT_DURATION_DAYS} days.`
+        : `Ranks higher in the catalog for ${FEATURED_PLACEMENT_DURATION_DAYS} days.`,
       [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Boost $1', onPress: () => boostListing(id, title, 'paid') },
+        {
+          text: `Feature ${formatUsdFromCents(FEATURED_CHECKOUT.totalCents)}`,
+          onPress: () => featureListing(id, title, 'paid'),
+        },
       ]
     );
   };
@@ -192,40 +163,36 @@ export default function MyListingsScreen(): React.JSX.Element {
           }
           ListHeaderComponent={
             tab === 'active' ? (
-              isFoundingSeller ? (
-                <BoostCreditsBanner
-                  remaining={foundingRemaining}
-                  total={foundingTotal}
-                  title="Founding Seller boosts"
-                  subtitle="Tap Founding boost on a listing below."
-                />
-              ) : premiumActive ? (
-                <BoostCreditsBanner
-                  remaining={freeBoosts}
-                  total={boostCreditsTotal || PREMIUM_FREE_BOOSTS_PER_MONTH}
-                />
-              ) : (
-                <View style={styles.nonPremiumHint}>
-                  <Text style={styles.nonPremiumHintText}>
-                    {paidBoostsAvailable
-                      ? `Premium includes ${PREMIUM_FREE_BOOSTS_PER_MONTH} free boosts per month. Paid boosts are $1 each below.`
-                      : 'Free, promo, and founding boost credits remain available. Paid boosts are disabled on iOS until Apple In-App Purchase is implemented.'}
-                  </Text>
-                  <Pressable onPress={() => router.push('/settings/premium')}>
-                    <Text style={styles.nonPremiumLink}>
-                      {paidBoostsAvailable ? 'View Premium' : 'View benefits'}
+              <>
+                <SellerStrikeNotice />
+                {proSellerActive ? (
+                  <FeaturedCreditsBanner
+                    remaining={featuredCreditsRemaining}
+                    total={featuredCreditsTotal || PRO_SELLER_FEATURED_CREDITS_PER_MONTH}
+                  />
+                ) : (
+                  <View style={styles.nonProHint}>
+                    <Text style={styles.nonProHintText}>
+                      {paidFeaturedAvailable
+                        ? `Pro Seller includes ${PRO_SELLER_FEATURED_CREDITS_PER_MONTH} Featured credits per month plus an 8% commission rate. Anyone can also buy Featured placement à la carte.`
+                        : 'Pro Seller credits and paid Featured placements require Stripe checkout (disabled on iOS until IAP).'}
                     </Text>
-                  </Pressable>
-                </View>
-              )
+                    <Pressable onPress={() => router.push('/settings/premium')}>
+                      <Text style={styles.nonProLink}>
+                        {paidFeaturedAvailable ? 'View Pro Seller' : 'View seller benefits'}
+                      </Text>
+                    </Pressable>
+                  </View>
+                )}
+              </>
             ) : null
           }
           ListEmptyComponent={
             <Text style={styles.empty}>
               {tab === 'active'
-                ? 'No active listings. Post something from the Post Ad tab.'
+                ? 'No active listings. Post something from the Sell tab.'
                 : tab === 'expired'
-                  ? `No expired listings yet. ${LISTING_EXPIRY_HINT} — post a new listing from the Post Ad tab to sell again.`
+                  ? 'No expired listings yet.'
                   : `No ${tab} listings yet.`}
             </Text>
           }
@@ -235,27 +202,17 @@ export default function MyListingsScreen(): React.JSX.Element {
               showExpiry={tab === 'active'}
               onPress={() => router.push(`/listing/${item.id}`)}
               onEdit={tab === 'active' ? () => startEdit(item) : undefined}
-              onBoostFree={
-                tab === 'active' && premiumActive && freeBoosts > 0
-                  ? () => confirmBoostFree(item.id, item.title)
+              onFeatureCredit={
+                tab === 'active' && proSellerActive && featuredCreditsRemaining > 0
+                  ? () => confirmFeatureCredit(item.id, item.title)
                   : undefined
               }
-              onBoostFounding={
-                tab === 'active' && isFoundingSeller && foundingRemaining > 0
-                  ? () => confirmBoostFounding(item.id, item.title)
-                  : undefined
-              }
-              onBoostPromo={
-                tab === 'active' && promoBoostsRemaining > 0
-                  ? () => confirmBoostPromo(item.id, item.title)
-                  : undefined
-              }
-              onBoostPaid={tab === 'active' && paidBoostsAvailable ? () => confirmBoostPaid(item.id, item.title) : undefined}
+              onFeaturePaid={tab === 'active' && paidFeaturedAvailable ? () => confirmFeaturePaid(item.id, item.title) : undefined}
               onMarkSold={tab === 'active' ? () => confirmMarkSold(item.id, item.title) : undefined}
               onDelete={tab === 'active' ? () => confirmDelete(item.id, item.title) : undefined}
               busy={isMarkingSold || isDeleting}
-              boostBusy={boostingId === item.id}
-              freeBoostsRemaining={tab === 'active' ? freeBoosts : 0}
+              featureBusy={featuringId === item.id}
+              featuredCreditsRemaining={tab === 'active' ? featuredCreditsRemaining : 0}
             />
           )}
         />
@@ -284,7 +241,7 @@ const useStyles = createThemedStyles((colors) => StyleSheet.create({
   tabText: { fontSize: fontSize.caption, fontWeight: fontWeight.semibold, color: colors.textSecondary },
   tabTextActive: { color: colors.primary },
   list: { padding: spacing.md, paddingTop: 0, flexGrow: 1 },
-  nonPremiumHint: {
+  nonProHint: {
     backgroundColor: colors.surface,
     borderRadius: radius.md,
     borderWidth: 1,
@@ -293,8 +250,8 @@ const useStyles = createThemedStyles((colors) => StyleSheet.create({
     marginBottom: spacing.md,
     gap: spacing.xs,
   },
-  nonPremiumHintText: { fontSize: fontSize.caption, color: colors.textSecondary },
-  nonPremiumLink: {
+  nonProHintText: { fontSize: fontSize.caption, color: colors.textSecondary },
+  nonProLink: {
     fontSize: fontSize.caption,
     fontWeight: fontWeight.bold,
     color: colors.premium,

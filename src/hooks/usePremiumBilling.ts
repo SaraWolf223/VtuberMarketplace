@@ -19,7 +19,7 @@ export function usePremiumBilling() {
   const openPortal = useCallback(async () => {
     const token = session?.access_token;
     if (!token || !user?.id) {
-      Alert.alert('Sign in', 'Sign in to manage Premium.');
+      Alert.alert('Sign in', 'Sign in to manage Pro Seller billing.');
       return;
     }
 

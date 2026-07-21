@@ -23,27 +23,31 @@ import { useAppConfigStore } from '@/stores/app-config-store';
 import { fetchPublicAppConfig, updatePublicAppConfig } from '@/features/app-config/app-config-service';
 
 type SettingsForm = {
-  boost_duration_hours: string;
-  boost_base_cents: string;
   reports_per_hour: string;
   pause_reports_24h: string;
   pause_reports_lifetime: string;
 };
 
-function toForm(settings: Record<string, number>): SettingsForm {
+type FeeTierForm = {
+  feeBpsFree: string;
+  feeBpsPro: string;
+};
+
+type FeaturedForm = {
+  durationDays: string;
+  priceCents: string;
+};
+
+function toModerationForm(settings: Record<string, number>): SettingsForm {
   return {
-    boost_duration_hours: String(settings.boost_duration_hours ?? 24),
-    boost_base_cents: String(settings.boost_base_cents ?? 100),
     reports_per_hour: String(settings.reports_per_hour ?? 5),
     pause_reports_24h: String(settings.pause_reports_24h ?? 10),
     pause_reports_lifetime: String(settings.pause_reports_lifetime ?? 50),
   };
 }
 
-function parseForm(form: SettingsForm): Record<string, number> {
+function parseModerationForm(form: SettingsForm): Record<string, number> {
   return {
-    boost_duration_hours: parseInt(form.boost_duration_hours, 10) || 24,
-    boost_base_cents: parseInt(form.boost_base_cents, 10) || 100,
     reports_per_hour: parseInt(form.reports_per_hour, 10) || 5,
     pause_reports_24h: parseInt(form.pause_reports_24h, 10) || 10,
     pause_reports_lifetime: parseInt(form.pause_reports_lifetime, 10) || 50,
@@ -76,46 +80,30 @@ export default function AdminSettingsScreen(): React.JSX.Element {
   const colors = useThemeColors();
   const { session, isLoading: authLoading } = useAuth();
   const token = session?.access_token ?? '';
-  const [form, setForm] = useState<SettingsForm>(() =>
-    toForm(DEFAULT_ADMIN_PLATFORM_SETTINGS)
-  );
+  const [form, setForm] = useState<SettingsForm>(() => toModerationForm(DEFAULT_ADMIN_PLATFORM_SETTINGS));
+  const [feeForm, setFeeForm] = useState<FeeTierForm>({ feeBpsFree: '1000', feeBpsPro: '800' });
+  const [featuredForm, setFeaturedForm] = useState<FeaturedForm>({ durationDays: '7', priceCents: '500' });
   const [saving, setSaving] = useState(false);
+  const [savingFees, setSavingFees] = useState(false);
+  const [savingFeatured, setSavingFeatured] = useState(false);
 
   const appConfig = useAppConfigStore((s) => s.config);
-  const [radiusOptionsText, setRadiusOptionsText] = useState(() =>
-    appConfig.feedRadiusOptions.join(', ')
-  );
-  const [maxRadiusText, setMaxRadiusText] = useState(() => String(appConfig.maxRadiusMiles));
-  const [savingRadius, setSavingRadius] = useState(false);
 
   useEffect(() => {
-    setRadiusOptionsText(appConfig.feedRadiusOptions.join(', '));
-    setMaxRadiusText(String(appConfig.maxRadiusMiles));
-  }, [appConfig.feedRadiusOptions, appConfig.maxRadiusMiles]);
-
-  const saveRadius = async () => {
-    if (!token) return;
-    const feedRadiusOptions = radiusOptionsText
-      .split(',')
-      .map((s) => parseFloat(s.trim()))
-      .filter((n) => Number.isFinite(n) && n > 0);
-    const maxRadiusMiles = parseFloat(maxRadiusText);
-    if (feedRadiusOptions.length === 0 || !Number.isFinite(maxRadiusMiles) || maxRadiusMiles <= 0) {
-      Alert.alert('Error', 'Enter valid, comma-separated radius options and a max radius.');
-      return;
-    }
-    setSavingRadius(true);
-    try {
-      await updatePublicAppConfig(token, { feedRadiusOptions, maxRadiusMiles });
-      const fresh = await fetchPublicAppConfig();
-      useAppConfigStore.getState().setConfig(fresh);
-      Alert.alert('Saved', 'Feed radius options updated for all users.');
-    } catch (e) {
-      Alert.alert('Error', e instanceof Error ? e.message : 'Could not save radius options');
-    } finally {
-      setSavingRadius(false);
-    }
-  };
+    setFeeForm({
+      feeBpsFree: String(Math.round(appConfig.platformFeePercentFree * 10_000)),
+      feeBpsPro: String(Math.round(appConfig.platformFeePercentPro * 10_000)),
+    });
+    setFeaturedForm({
+      durationDays: String(appConfig.featuredPlacementDurationDays),
+      priceCents: String(appConfig.featuredPlacementPriceCents),
+    });
+  }, [
+    appConfig.platformFeePercentFree,
+    appConfig.platformFeePercentPro,
+    appConfig.featuredPlacementDurationDays,
+    appConfig.featuredPlacementPriceCents,
+  ]);
 
   const settingsQuery = useQuery({
     queryKey: queryKeys.adminSettings,
@@ -126,16 +114,61 @@ export default function AdminSettingsScreen(): React.JSX.Element {
 
   useEffect(() => {
     if (settingsQuery.data) {
-      setForm(toForm(settingsQuery.data));
+      setForm(toModerationForm(settingsQuery.data));
     }
   }, [settingsQuery.data]);
+
+  const saveFeatured = async () => {
+    if (!token) return;
+    const durationDays = parseInt(featuredForm.durationDays, 10);
+    const priceCents = parseInt(featuredForm.priceCents, 10);
+    if (!Number.isFinite(durationDays) || durationDays <= 0 || !Number.isFinite(priceCents) || priceCents <= 0) {
+      Alert.alert('Error', 'Enter valid Featured duration and price.');
+      return;
+    }
+    setSavingFeatured(true);
+    try {
+      await updatePublicAppConfig(token, {
+        featuredPlacementDurationDays: durationDays,
+        featuredPlacementPriceCents: priceCents,
+      });
+      const fresh = await fetchPublicAppConfig();
+      useAppConfigStore.getState().setConfig(fresh);
+      Alert.alert('Saved', 'Featured placement defaults updated.');
+    } catch (e) {
+      Alert.alert('Error', e instanceof Error ? e.message : 'Could not save Featured settings');
+    } finally {
+      setSavingFeatured(false);
+    }
+  };
+
+  const saveFees = async () => {
+    if (!token) return;
+    const feeBpsFree = parseInt(feeForm.feeBpsFree, 10);
+    const feeBpsPro = parseInt(feeForm.feeBpsPro, 10);
+    if (!Number.isFinite(feeBpsFree) || feeBpsFree <= 0 || !Number.isFinite(feeBpsPro) || feeBpsPro <= 0) {
+      Alert.alert('Error', 'Enter valid basis-point values (1000 = 10%).');
+      return;
+    }
+    setSavingFees(true);
+    try {
+      await updatePublicAppConfig(token, { platformFeeBpsFree: feeBpsFree, platformFeeBpsPro: feeBpsPro });
+      const fresh = await fetchPublicAppConfig();
+      useAppConfigStore.getState().setConfig(fresh);
+      Alert.alert('Saved', 'Commission tiers updated for new checkouts.');
+    } catch (e) {
+      Alert.alert('Error', e instanceof Error ? e.message : 'Could not save fee tiers');
+    } finally {
+      setSavingFees(false);
+    }
+  };
 
   const save = async () => {
     if (!token) return;
     setSaving(true);
     try {
-      const updated = await updatePlatformSettings(token, parseForm(form));
-      setForm(toForm(updated));
+      const updated = await updatePlatformSettings(token, parseModerationForm(form));
+      setForm(toModerationForm(updated));
       Alert.alert('Saved', 'Platform settings updated. New checkouts use these values.');
     } catch (e) {
       Alert.alert('Error', e instanceof Error ? e.message : 'Could not save');
@@ -191,19 +224,55 @@ export default function AdminSettingsScreen(): React.JSX.Element {
         </View>
       ) : null}
 
-      <Text style={styles.section}>Boost defaults</Text>
+      <Text style={styles.section}>Commission tiers</Text>
       <FieldInput
-        label="Boost duration (hours)"
-        hint="Applies to new boosts"
-        value={form.boost_duration_hours}
-        onChangeText={(text) => setForm((prev) => ({ ...prev, boost_duration_hours: text }))}
+        label="Free-tier fee (basis points)"
+        hint="1000 = 10% platform commission on destination charges"
+        value={feeForm.feeBpsFree}
+        onChangeText={(text) => setFeeForm((prev) => ({ ...prev, feeBpsFree: text }))}
       />
       <FieldInput
-        label="Boost base price (cents)"
-        hint={`Display/checkout base before Stripe fees (${formatUsdFromCents(parseInt(form.boost_base_cents, 10) || 100)})`}
-        value={form.boost_base_cents}
-        onChangeText={(text) => setForm((prev) => ({ ...prev, boost_base_cents: text }))}
+        label="Pro Seller fee (basis points)"
+        hint="800 = 8% commission for active Pro Seller subscribers"
+        value={feeForm.feeBpsPro}
+        onChangeText={(text) => setFeeForm((prev) => ({ ...prev, feeBpsPro: text }))}
       />
+      <Pressable
+        style={[styles.primaryBtn, savingFees && styles.disabled]}
+        onPress={() => void saveFees()}
+        disabled={savingFees}
+      >
+        {savingFees ? (
+          <ActivityIndicator color={colors.onPrimary} />
+        ) : (
+          <Text style={styles.primaryBtnText}>Save commission tiers</Text>
+        )}
+      </Pressable>
+
+      <Text style={styles.section}>Featured placement defaults</Text>
+      <FieldInput
+        label="Featured duration (days)"
+        hint="Applies to new Featured purchases and Pro Seller credits"
+        value={featuredForm.durationDays}
+        onChangeText={(text) => setFeaturedForm((prev) => ({ ...prev, durationDays: text }))}
+      />
+      <FieldInput
+        label="Featured base price (cents)"
+        hint={`Display/checkout base before Stripe fees (${formatUsdFromCents(parseInt(featuredForm.priceCents, 10) || 500)})`}
+        value={featuredForm.priceCents}
+        onChangeText={(text) => setFeaturedForm((prev) => ({ ...prev, priceCents: text }))}
+      />
+      <Pressable
+        style={[styles.primaryBtn, savingFeatured && styles.disabled]}
+        onPress={() => void saveFeatured()}
+        disabled={savingFeatured}
+      >
+        {savingFeatured ? (
+          <ActivityIndicator color={colors.onPrimary} />
+        ) : (
+          <Text style={styles.primaryBtnText}>Save Featured defaults</Text>
+        )}
+      </Pressable>
 
       <Text style={styles.section}>Moderation auto-pause</Text>
       <FieldInput
@@ -233,36 +302,7 @@ export default function AdminSettingsScreen(): React.JSX.Element {
         {saving ? (
           <ActivityIndicator color={colors.onPrimary} />
         ) : (
-          <Text style={styles.primaryBtnText}>Save settings</Text>
-        )}
-      </Pressable>
-
-      <Text style={styles.section}>Feed radius options</Text>
-      <View style={styles.field}>
-        <Text style={styles.label}>Distance chips (miles, comma-separated)</Text>
-        <Text style={styles.hint}>Shown to users when picking a search radius, e.g. 0.5, 1, 2, 5, 10, 25, 50</Text>
-        <TextInput
-          style={styles.input}
-          value={radiusOptionsText}
-          onChangeText={setRadiusOptionsText}
-          placeholder="0.5, 1, 2, 5, 10, 25, 50"
-        />
-      </View>
-      <FieldInput
-        label="Max radius (miles)"
-        hint="Hard cap enforced server-side — must be ≥ the largest chip above"
-        value={maxRadiusText}
-        onChangeText={setMaxRadiusText}
-      />
-      <Pressable
-        style={[styles.primaryBtn, savingRadius && styles.disabled]}
-        onPress={() => void saveRadius()}
-        disabled={savingRadius}
-      >
-        {savingRadius ? (
-          <ActivityIndicator color={colors.onPrimary} />
-        ) : (
-          <Text style={styles.primaryBtnText}>Save radius options</Text>
+          <Text style={styles.primaryBtnText}>Save platform settings</Text>
         )}
       </Pressable>
     </ScrollView>

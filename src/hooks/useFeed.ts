@@ -18,6 +18,9 @@ export function useFeed() {
     publishedAfter,
     publishedBefore,
     minSellerRating,
+    licenseType,
+    hasCustomization,
+    hasSetup,
   } = useFeedFiltersStore();
   const [debouncedSearch, setDebouncedSearch] = useState(search);
 
@@ -37,6 +40,9 @@ export function useFeed() {
       publishedAfter,
       publishedBefore,
       minSellerRating,
+      licenseType,
+      hasCustomization,
+      hasSetup,
     }),
     [
       category,
@@ -48,6 +54,9 @@ export function useFeed() {
       publishedAfter,
       publishedBefore,
       minSellerRating,
+      licenseType,
+      hasCustomization,
+      hasSetup,
     ]
   );
 

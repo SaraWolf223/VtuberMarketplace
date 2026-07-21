@@ -14,7 +14,17 @@ export type AdminActionPayload =
   | { action: 'extend_listing_expiry'; listing_id: string; extend_days?: number; notes?: string }
   | { action: 'approve_seed_listing'; listing_id: string; notes?: string }
   | { action: 'revoke_seed_approval'; listing_id: string; notes?: string }
-  | { action: 'mark_seed_paid'; listing_id: string; notes?: string };
+  | { action: 'mark_seed_paid'; listing_id: string; notes?: string }
+  | {
+      action: 'confirm_seller_strike';
+      seller_id: string;
+      listing_id?: string | null;
+      link_health_check_id?: string;
+      reason?: string;
+      source?: 'automated_check' | 'buyer_report';
+      notes?: string;
+    }
+  | { action: 'ban_ai_content'; user_id: string; listing_id?: string | null; report_id?: string; notes?: string };
 
 export type AdminActionResult = Record<string, unknown>;
 

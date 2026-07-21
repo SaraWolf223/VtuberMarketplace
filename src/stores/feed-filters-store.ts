@@ -6,6 +6,8 @@ export type FeedMaxPrice = null | 5 | 10 | 20 | 35 | 50 | 100 | 250;
 export type FeedMinPrice = null | number;
 export type FeedListingStatus = 'active' | 'sold';
 
+export type LicenseFilter = null | 'otu' | 'p2u';
+
 type FeedFiltersState = {
   category: ListingCategory | null;
   minPrice: FeedMinPrice;
@@ -17,6 +19,9 @@ type FeedFiltersState = {
   publishedAfter: string | null;
   publishedBefore: string | null;
   minSellerRating: number | null;
+  licenseType: LicenseFilter;
+  hasCustomization: boolean | null;
+  hasSetup: boolean | null;
   setCategory: (category: ListingCategory | null) => void;
   setMinPrice: (minPrice: FeedMinPrice) => void;
   setMaxPrice: (maxPrice: FeedMaxPrice) => void;
@@ -27,6 +32,9 @@ type FeedFiltersState = {
   setPublishedAfter: (iso: string | null) => void;
   setPublishedBefore: (iso: string | null) => void;
   setMinSellerRating: (rating: number | null) => void;
+  setLicenseType: (licenseType: LicenseFilter) => void;
+  setHasCustomization: (value: boolean | null) => void;
+  setHasSetup: (value: boolean | null) => void;
   reset: () => void;
 };
 
@@ -41,6 +49,9 @@ const initial = {
   publishedAfter: null as string | null,
   publishedBefore: null as string | null,
   minSellerRating: null as number | null,
+  licenseType: null as LicenseFilter,
+  hasCustomization: null as boolean | null,
+  hasSetup: null as boolean | null,
 };
 
 export const useFeedFiltersStore = create<FeedFiltersState>((set) => ({
@@ -55,5 +66,8 @@ export const useFeedFiltersStore = create<FeedFiltersState>((set) => ({
   setPublishedAfter: (publishedAfter) => set({ publishedAfter }),
   setPublishedBefore: (publishedBefore) => set({ publishedBefore }),
   setMinSellerRating: (minSellerRating) => set({ minSellerRating }),
+  setLicenseType: (licenseType) => set({ licenseType }),
+  setHasCustomization: (hasCustomization) => set({ hasCustomization }),
+  setHasSetup: (hasSetup) => set({ hasSetup }),
   reset: () => set({ ...initial }),
 }));

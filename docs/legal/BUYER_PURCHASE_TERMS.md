@@ -1,11 +1,11 @@
-# Local Marketplace Buyer Purchase Terms
+# VTuber Marketplace Buyer Purchase Terms
 
 > **Pre-production draft.** This document has not been reviewed by a licensed attorney. Recommend licensed attorney review before commercial launch or major scaling. Not legal advice.
 
 **Last updated:** [LAST UPDATED DATE — see docs/legal/ENTITY.md]  
 **Effective date:** [EFFECTIVE DATE — see docs/legal/ENTITY.md]
 
-These Buyer Purchase Terms are **incorporated into** our [Terms of Service](./TERMS_OF_SERVICE.md) and apply whenever you purchase a digital VTuber asset on Local Marketplace. If you sell, additional terms apply — see the [Seller Agreement](./SELLER_AGREEMENT.md).
+These Buyer Purchase Terms are **incorporated into** our [Terms of Service](./TERMS_OF_SERVICE.md) and apply whenever you purchase a digital VTuber asset on VTuber Marketplace. If you sell, additional terms apply — see the [Seller Agreement](./SELLER_AGREEMENT.md).
 
 ---
 
@@ -15,7 +15,7 @@ When you complete a purchase, you receive **exactly what the seller's license gr
 
 Every listing carries a seller-authored **OTU** (One-Time-Use — full rights/copyright transfer) or **P2U** (Pay-to-Use — non-exclusive usage license) license. The **exact license text shown on the listing at the moment of your purchase** is captured verbatim and stored as an immutable `license_snapshot` tied to your order — this snapshot, not any later edit to the listing, is your permanent record of what you are entitled to do with the asset.
 
-Local Marketplace does not author, warrant, or interpret seller license text. If you are unsure what a license permits, ask the seller **before** you buy.
+VTuber Marketplace does not author, warrant, or interpret seller license text. If you are unsure what a license permits, ask the seller **before** you buy.
 
 ---
 
@@ -27,7 +27,7 @@ Before you complete checkout, you must check an **acknowledgment box** confirmin
 
 ## 3. Digital delivery
 
-Assets are delivered via a **seller-hosted download link**, not a file hosted by Local Marketplace. After a completed purchase, your order's deliverable includes the seller's `deliverable_url`. Local Marketplace does not host, cache, back up, or guarantee the continued availability of that file — see [Terms of Service §7](./TERMS_OF_SERVICE.md#7-digital-delivery-seller-hosted-links-only).
+Assets are delivered via a **seller-hosted download link**, not a file hosted by VTuber Marketplace. After a completed purchase, your order's deliverable includes the seller's `deliverable_url`. VTuber Marketplace does not host, cache, back up, or guarantee the continued availability of that file — see [Terms of Service §7](./TERMS_OF_SERVICE.md#7-digital-delivery-seller-hosted-links-only).
 
 If your download link does not work, use **Report a broken download link** in-app so we can follow up with the seller and, if applicable, credit a strike under the [Seller Agreement](./SELLER_AGREEMENT.md#5-link-health-and-the-strike-system).
 
@@ -35,7 +35,7 @@ If your download link does not work, use **Report a broken download link** in-ap
 
 ## 4. No-refund policy
 
-**Sales on Local Marketplace are final.** Because assets are digital and delivered instantly, we do not offer refunds except in the following cases:
+**Sales on VTuber Marketplace are final.** Because assets are digital and delivered instantly, we do not offer refunds except in the following cases:
 
 | Exception | What qualifies |
 |-----------|-----------------|

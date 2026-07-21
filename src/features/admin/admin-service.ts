@@ -1,5 +1,9 @@
 import type { QueryClient } from '@tanstack/react-query';
 import {
+  fetchAdminStrikeQueue,
+  type AdminStrikeQueueItem,
+} from '@/features/strikes/strike-service';
+import {
   getSupabaseEnv,
   supabaseRestGet,
   supabaseRestPatch,
@@ -551,10 +555,11 @@ export type AdminQueueCounts = {
   pausedListings: number;
   openReports: number;
   overdueReports: number;
+  pendingStrikes: number;
 };
 
 export async function fetchAdminQueueCounts(accessToken: string): Promise<AdminQueueCounts> {
-  const [paused, reports] = await Promise.all([
+  const [paused, reports, strikeQueue] = await Promise.all([
     supabaseRestGet<{ id: string }>(
       'listings?status=eq.paused_pending_review&select=id',
       accessToken
@@ -563,6 +568,7 @@ export async function fetchAdminQueueCounts(accessToken: string): Promise<AdminQ
       'reports?status=eq.open&select=id,created_at',
       accessToken
     ),
+    fetchAdminStrikeQueue(accessToken).catch(() => [] as AdminStrikeQueueItem[]),
   ]);
 
   const overdueCutoff = Date.now() - 24 * 3_600_000;
@@ -570,12 +576,21 @@ export async function fetchAdminQueueCounts(accessToken: string): Promise<AdminQ
     (row) => new Date(row.created_at).getTime() < overdueCutoff
   ).length;
 
+  const now = Date.now();
+  const pendingStrikes = strikeQueue.filter((row) => {
+    if (!row.grace_period_ends_at) return true;
+    return new Date(row.grace_period_ends_at).getTime() <= now;
+  }).length;
+
   return {
     pausedListings: paused.length,
     openReports: reports.length,
     overdueReports,
+    pendingStrikes,
   };
 }
+
+export { fetchAdminStrikeQueue, type AdminStrikeQueueItem };
 
 type StaffUsersRpcResult = {
   items: StaffDirectoryUser[];
@@ -1277,6 +1292,7 @@ export function invalidateAdminModerationQueries(queryClient: QueryClient): void
   void queryClient.invalidateQueries({ queryKey: queryKeys.adminPausedListings });
   void queryClient.invalidateQueries({ queryKey: queryKeys.adminWarnedUsers });
   void queryClient.invalidateQueries({ queryKey: queryKeys.adminBannedUsers });
+  void queryClient.invalidateQueries({ queryKey: queryKeys.adminStrikeQueue });
 }
 
 export async function fetchAdminWaitlistPage(

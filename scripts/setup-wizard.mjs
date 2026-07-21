@@ -1,9 +1,9 @@
 /**
- * Local-only buyer setup wizard.
+ * Local-only developer setup wizard.
  *
  * This is intentionally a terminal program, never an Expo route or web page.
  * It writes only git-ignored local files and makes no network requests. Runtime
- * white-label values can be applied later with `npm run setup:apply`.
+ * platform defaults can be applied later with `npm run setup:apply`.
  */
 import { chmodSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { createInterface } from 'node:readline/promises';
@@ -21,14 +21,14 @@ const SECTIONS = [
   {
     name: 'App identity and native builds',
     fields: [
-      ['APP_DISPLAY_NAME', 'App display name', 'Local Marketplace'],
-      ['APP_SCHEME', 'Deep-link scheme (lowercase, no spaces)', 'localmarketplace'],
+      ['APP_DISPLAY_NAME', 'App display name', 'VTuber Marketplace'],
+      ['APP_SCHEME', 'Deep-link scheme (lowercase, no spaces)', 'vtubermarketplace'],
       ['APP_DOMAIN', 'Production domain (no https://)', 'yourdomain.com'],
-      ['IOS_BUNDLE_IDENTIFIER', 'iOS bundle identifier', 'com.example.localmarketplace'],
-      ['ANDROID_PACKAGE', 'Android package identifier', 'com.example.localmarketplace'],
+      ['IOS_BUNDLE_IDENTIFIER', 'iOS bundle identifier', 'com.example.vtubermarketplace'],
+      ['ANDROID_PACKAGE', 'Android package identifier', 'com.example.vtubermarketplace'],
       ['IOS_MERCHANT_IDENTIFIER', 'Apple merchant identifier', '', false],
       ['EXPO_OWNER', 'Expo/EAS account owner', 'your-eas-account'],
-      ['EXPO_SLUG', 'Expo project slug', 'local-marketplace'],
+      ['EXPO_SLUG', 'Expo project slug', 'vtuber-marketplace'],
       ['EAS_PROJECT_ID', 'EAS project ID', '', false],
       ['SUPPORT_EMAIL', 'Support and staff-notification email', 'support@yourdomain.com'],
     ],
@@ -85,16 +85,19 @@ const SECTIONS = [
   },
 ];
 
-const WHITE_LABEL_FIELDS = [
-  ['appDisplayName', 'Public app name', 'Local Marketplace'],
+const PLATFORM_DEFAULT_FIELDS = [
+  ['appDisplayName', 'Public app name', 'VTuber Marketplace'],
   ['supportEmail', 'Public support email', 'support@example.com'],
   ['primary', 'Primary color (#RRGGBB)', '#0066FF'],
   ['primaryDark', 'Dark-mode primary color (#RRGGBB)', '#0066FF'],
   ['accent', 'Accent color (#RRGGBB)', '#0066FF'],
-  ['radiusOptions', 'Feed radius choices in miles', '0.5, 1, 2, 5, 10, 25, 50'],
-  ['maxRadiusMiles', 'Maximum feed radius', '50'],
-  ['boostDurationHours', 'Boost duration in hours', '24'],
-  ['boostBaseCents', 'Boost base price in cents', '100'],
+  ['platformFeeBpsFree', 'Platform fee — free tier (basis points)', '1000'],
+  ['platformFeeBpsPro', 'Platform fee — Pro Seller (basis points)', '800'],
+  ['featuredPlacementDays', 'Featured placement duration (days)', '7'],
+  ['featuredPlacementCents', 'Featured placement price (cents)', '500'],
+  ['linkHealthGraceHours', 'Broken-link grace period (hours)', '48'],
+  ['strikeExpiryMonths', 'Strike expiry (months)', '12'],
+  ['strikeBanThreshold', 'Strikes before ban', '3'],
   ['reportsPerHour', 'Report limit per user/hour', '5'],
   ['pauseReports24h', 'Auto-pause reports in 24 hours', '10'],
   ['pauseReportsLifetime', 'Auto-pause lifetime reports', '50'],
@@ -189,40 +192,40 @@ function validateIdentity(values, { rejectPlaceholders = false } = {}) {
   validateEmail(values.SUPPORT_EMAIL, 'SUPPORT_EMAIL');
   if (rejectPlaceholders) {
     const joined = required.map((key) => String(values[key])).join(' ');
-    if (/yourdomain|your-eas-account|com\.example|support@example|localmarketplace/i.test(joined)) throw new Error('Buyer identity still contains bundled placeholder values.');
+    if (/yourdomain|your-eas-account|com\.example|support@example|vtubermarketplace/i.test(joined)) throw new Error('App identity still contains bundled placeholder values.');
   }
 }
 
-function normalizeWhiteLabel(raw, env) {
+function normalizePlatformDefaults(raw, env) {
   const color = (key) => {
     const value = String(raw[key] || '#0066FF').trim();
     if (!/^#[0-9A-Fa-f]{6}$/.test(value)) throw new Error(`${key} must use #RRGGBB format.`);
     return value.toUpperCase();
   };
-  const radiusOptions = String(raw.radiusOptions || '')
-    .split(',')
-    .map((value) => Number(value.trim()));
-  if (!radiusOptions.length || radiusOptions.some((value) => !Number.isFinite(value) || value <= 0 || value > 200)) {
-    throw new Error('Radius choices must be comma-separated numbers between 0 and 200.');
-  }
   const appDisplayName = String(raw.appDisplayName || env.APP_DISPLAY_NAME || '').trim();
   const supportEmail = String(raw.supportEmail || env.SUPPORT_EMAIL || '').trim();
   if (!appDisplayName || appDisplayName.length > 60) throw new Error('Public app name is required and must be 60 characters or fewer.');
   validateEmail(supportEmail, 'Public support email');
-  const maxRadiusMiles = positiveNumber(raw.maxRadiusMiles, 'Maximum radius', 200);
-  if (Math.max(...radiusOptions) > maxRadiusMiles) throw new Error('Maximum radius must cover every radius choice.');
+  const bps = (value, label) => {
+    const number = positiveNumber(value, label, 5000);
+    if (number < 0 || number > 5000) throw new Error(`${label} must be between 0 and 5000 basis points.`);
+    return number;
+  };
   return {
     version: 1,
     publicAppConfig: {
       app_display_name: appDisplayName,
       support_email: supportEmail,
       branding_colors: { primary: color('primary'), primaryDark: color('primaryDark'), accent: color('accent') },
-      feed_radius_options: [...new Set(radiusOptions)].sort((a, b) => a - b),
-      max_radius_miles: maxRadiusMiles,
+      platform_fee_bps_free: bps(raw.platformFeeBpsFree, 'Free-tier platform fee'),
+      platform_fee_bps_pro: bps(raw.platformFeeBpsPro, 'Pro Seller platform fee'),
+      featured_placement_duration_days: positiveNumber(raw.featuredPlacementDays, 'Featured placement duration', 90),
+      featured_placement_price_cents: positiveNumber(raw.featuredPlacementCents, 'Featured placement price'),
+      link_health_grace_period_hours: positiveNumber(raw.linkHealthGraceHours, 'Link-health grace period', 168),
+      strike_expiry_months: positiveNumber(raw.strikeExpiryMonths, 'Strike expiry', 36),
+      strike_ban_threshold: positiveNumber(raw.strikeBanThreshold, 'Strike ban threshold', 20),
     },
     platformSettings: {
-      boost_duration_hours: positiveNumber(raw.boostDurationHours, 'Boost duration'),
-      boost_base_cents: positiveNumber(raw.boostBaseCents, 'Boost price'),
       reports_per_hour: positiveNumber(raw.reportsPerHour, 'Report limit'),
       pause_reports_24h: positiveNumber(raw.pauseReports24h, '24-hour threshold'),
       pause_reports_lifetime: positiveNumber(raw.pauseReportsLifetime, 'Lifetime threshold'),
@@ -254,26 +257,29 @@ function configurationCheck() {
   validateIdentity(env, { rejectPlaceholders: true });
   if (!env.EXPO_PUBLIC_SUPABASE_URL || !/^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(env.EXPO_PUBLIC_SUPABASE_URL) || /your-project|placeholder/.test(env.EXPO_PUBLIC_SUPABASE_URL)) throw new Error('Set a real EXPO_PUBLIC_SUPABASE_URL.');
   if (!env.EXPO_PUBLIC_SUPABASE_ANON_KEY || /your-anon-key|placeholder/.test(env.EXPO_PUBLIC_SUPABASE_ANON_KEY)) throw new Error('Set a real EXPO_PUBLIC_SUPABASE_ANON_KEY.');
-  if (!existsSync(BUYER_CONFIG_PATH)) throw new Error('White-label defaults are missing. Run `npm run setup` and configure them.');
+  if (!existsSync(BUYER_CONFIG_PATH)) throw new Error('Platform defaults are missing. Run `npm run setup` and configure them.');
   const buyerConfig = loadBuyerConfig();
   const publicConfig = buyerConfig.publicAppConfig;
   const platform = buyerConfig.platformSettings;
-  if (!publicConfig || !platform) throw new Error('White-label defaults are incomplete. Run `npm run setup` again.');
-  normalizeWhiteLabel({
+  if (!publicConfig || !platform) throw new Error('Platform defaults are incomplete. Run `npm run setup` again.');
+  normalizePlatformDefaults({
     appDisplayName: publicConfig.app_display_name,
     supportEmail: publicConfig.support_email,
     primary: publicConfig.branding_colors?.primary,
     primaryDark: publicConfig.branding_colors?.primaryDark,
     accent: publicConfig.branding_colors?.accent,
-    radiusOptions: publicConfig.feed_radius_options?.join(','),
-    maxRadiusMiles: publicConfig.max_radius_miles,
-    boostDurationHours: platform.boost_duration_hours,
-    boostBaseCents: platform.boost_base_cents,
+    platformFeeBpsFree: publicConfig.platform_fee_bps_free,
+    platformFeeBpsPro: publicConfig.platform_fee_bps_pro,
+    featuredPlacementDays: publicConfig.featured_placement_duration_days,
+    featuredPlacementCents: publicConfig.featured_placement_price_cents,
+    linkHealthGraceHours: publicConfig.link_health_grace_period_hours,
+    strikeExpiryMonths: publicConfig.strike_expiry_months,
+    strikeBanThreshold: publicConfig.strike_ban_threshold,
     reportsPerHour: platform.reports_per_hour,
     pauseReports24h: platform.pause_reports_24h,
     pauseReportsLifetime: platform.pause_reports_lifetime,
   }, env);
-  console.log('PASS buyer identity, Supabase client values, and white-label defaults are configured.');
+  console.log('PASS app identity, Supabase client values, and platform defaults are configured.');
 }
 
 function selfTest() {
@@ -303,19 +309,20 @@ function selfTest() {
   let placeholderRejected = false;
   try { validateIdentity({ ...validIdentity, APP_DOMAIN: 'yourdomain.com' }, { rejectPlaceholders: true }); } catch { placeholderRejected = true; }
   if (!placeholderRejected) throw new Error('Self-test expected bundled placeholders to be rejected.');
-  normalizeWhiteLabel({
+  normalizePlatformDefaults({
     appDisplayName: validIdentity.APP_DISPLAY_NAME,
     supportEmail: validIdentity.SUPPORT_EMAIL,
     primary: '#123456', primaryDark: '#112233', accent: '#ABCDEF',
-    radiusOptions: '1, 5, 25', maxRadiusMiles: '25',
-    boostDurationHours: '24', boostBaseCents: '100', reportsPerHour: '5',
-    pauseReports24h: '10', pauseReportsLifetime: '50',
+    platformFeeBpsFree: '1000', platformFeeBpsPro: '800',
+    featuredPlacementDays: '7', featuredPlacementCents: '500',
+    linkHealthGraceHours: '48', strikeExpiryMonths: '12', strikeBanThreshold: '3',
+    reportsPerHour: '5', pauseReports24h: '10', pauseReportsLifetime: '50',
   }, validIdentity);
-  console.log('PASS setup validators accept a complete buyer configuration and reject invalid identity values and placeholders.');
+  console.log('PASS setup validators accept a complete platform configuration and reject invalid identity values and placeholders.');
 }
 
 function printPreview() {
-  console.log('\nLocal Marketplace buyer setup — safe preview');
+  console.log('\nVTuber Marketplace local setup — safe preview');
   console.log('Nothing is hosted or transmitted. The live wizard writes only git-ignored local files.');
   console.log('This preview never asks for, displays, or saves credentials.\n');
   for (const section of SECTIONS) {
@@ -326,8 +333,8 @@ function printPreview() {
     }
     console.log('');
   }
-  console.log('White-label and platform defaults');
-  for (const [, label, fallback] of WHITE_LABEL_FIELDS) console.log(`  ${label} [${fallback}]`);
+  console.log('Platform branding and moderation defaults');
+  for (const [, label, fallback] of PLATFORM_DEFAULT_FIELDS) console.log(`  ${label} [${fallback}]`);
   console.log('\nNext: apply allowlisted defaults, finish Admin branding, then run setup checks and builds.');
 }
 
@@ -343,7 +350,7 @@ async function main() {
     throw new Error('The setup wizard requires a local interactive terminal and will not run as a hosted/non-interactive process.');
   }
 
-  console.log('\nLocal Marketplace buyer setup');
+  console.log('\nVTuber Marketplace local setup');
   console.log('Nothing is hosted or transmitted. Secrets are written only to the local git-ignored .env file.');
   console.log('Use a private terminal: newly typed secret values may be visible while you paste them.');
   console.log('Press Enter to keep the value shown in brackets.\n');
@@ -360,29 +367,32 @@ async function main() {
       }
     }
     validateIdentity(values);
-    const configure = (await rl.question('\nConfigure initial white-label/admin defaults now? [Y/n]: ')).trim().toLowerCase();
+    const configure = (await rl.question('\nConfigure initial platform/admin defaults now? [Y/n]: ')).trim().toLowerCase();
     if (configure !== 'n' && configure !== 'no') {
-      console.log('\nWhite-label and platform defaults');
+      console.log('\nPlatform branding and moderation defaults');
       const prior = {
         appDisplayName: currentConfig.publicAppConfig?.app_display_name || values.APP_DISPLAY_NAME,
         supportEmail: currentConfig.publicAppConfig?.support_email || values.SUPPORT_EMAIL,
         primary: currentConfig.publicAppConfig?.branding_colors?.primary,
         primaryDark: currentConfig.publicAppConfig?.branding_colors?.primaryDark,
         accent: currentConfig.publicAppConfig?.branding_colors?.accent,
-        radiusOptions: currentConfig.publicAppConfig?.feed_radius_options?.join(', '),
-        maxRadiusMiles: currentConfig.publicAppConfig?.max_radius_miles,
-        boostDurationHours: currentConfig.platformSettings?.boost_duration_hours,
-        boostBaseCents: currentConfig.platformSettings?.boost_base_cents,
+        platformFeeBpsFree: currentConfig.publicAppConfig?.platform_fee_bps_free,
+        platformFeeBpsPro: currentConfig.publicAppConfig?.platform_fee_bps_pro,
+        featuredPlacementDays: currentConfig.publicAppConfig?.featured_placement_duration_days,
+        featuredPlacementCents: currentConfig.publicAppConfig?.featured_placement_price_cents,
+        linkHealthGraceHours: currentConfig.publicAppConfig?.link_health_grace_period_hours,
+        strikeExpiryMonths: currentConfig.publicAppConfig?.strike_expiry_months,
+        strikeBanThreshold: currentConfig.publicAppConfig?.strike_ban_threshold,
         reportsPerHour: currentConfig.platformSettings?.reports_per_hour,
         pauseReports24h: currentConfig.platformSettings?.pause_reports_24h,
         pauseReportsLifetime: currentConfig.platformSettings?.pause_reports_lifetime,
       };
       const raw = {};
-      for (const [key, label, fallback] of WHITE_LABEL_FIELDS) raw[key] = await prompt(rl, label, String(prior[key] ?? ''), fallback);
-      const config = normalizeWhiteLabel(raw, values);
+      for (const [key, label, fallback] of PLATFORM_DEFAULT_FIELDS) raw[key] = await prompt(rl, label, String(prior[key] ?? ''), fallback);
+      const config = normalizePlatformDefaults(raw, values);
       writeFileSync(BUYER_CONFIG_PATH, `${JSON.stringify(config, null, 2)}\n`, { mode: 0o600 });
       protectLocalFile(BUYER_CONFIG_PATH);
-      console.log(`Wrote local white-label profile: ${BUYER_CONFIG_PATH}`);
+      console.log(`Wrote local platform defaults profile: ${BUYER_CONFIG_PATH}`);
     }
   } finally {
     rl.close();
@@ -394,7 +404,7 @@ async function main() {
   console.log('\nNext steps:');
   console.log('  1. Create the listed provider accounts and finish any blank values.');
   console.log('  2. Run Supabase migrations and deploy edge-function secrets per docs/00-Developer_Setup.md.');
-  console.log('  3. Run `npm run setup:apply` to apply the allowlisted white-label/platform defaults.');
+  console.log('  3. Run `npm run setup:apply` to apply the allowlisted platform defaults.');
   console.log('  4. Create your first user, promote it to admin, enable MFA, and use Admin screens for logo, categories, and email templates.');
   console.log('  5. Run `npm run setup:check`, then build preview apps.');
 }

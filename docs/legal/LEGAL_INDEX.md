@@ -1,14 +1,14 @@
-# Local Marketplace legal document index
+# VTuber Marketplace legal document index
 
 > **Pre-production draft.** Recommend licensed attorney review before major scaling. Entity details: [ENTITY.md](./ENTITY.md).
 
-This folder defines how Local Marketplace legal policies fit together. The structure is inspired by common marketplace practice (master terms + supplemental policies, separate seller/buyer terms, a standalone DMCA policy) but written specifically for Local Marketplace's **marketplace-facilitator** model for pre-made digital VTuber assets.
+This folder defines how VTuber Marketplace legal policies fit together. The structure is inspired by common marketplace practice (master terms + supplemental policies, separate seller/buyer terms, a standalone DMCA policy) but written specifically for VTuber Marketplace's **marketplace-facilitator** model for pre-made digital VTuber assets.
 
 ---
 
 ## Document hierarchy
 
-When you use Local Marketplace, these documents work as a **stack**:
+When you use VTuber Marketplace, these documents work as a **stack**:
 
 | Layer | Document | Role |
 |-------|----------|------|
@@ -23,7 +23,7 @@ When you use Local Marketplace, these documents work as a **stack**:
 
 ## Why a facilitator model needs this structure
 
-Local Marketplace is a **marketplace-facilitator model, not a merchant/retailer**: we are not the seller, not a party to the OTU/P2U license, and not a merchant of record for the underlying asset. That means the Terms of Service alone can't carry every seller- or buyer-specific obligation — so licensing and enforcement responsibilities are split out:
+VTuber Marketplace is a **marketplace-facilitator model, not a merchant/retailer**: we are not the seller, not a party to the OTU/P2U license, and not a merchant of record for the underlying asset. That means the Terms of Service alone can't carry every seller- or buyer-specific obligation — so licensing and enforcement responsibilities are split out:
 
 | Concern | Where it lives |
 |---------|-----------------|
@@ -34,7 +34,7 @@ Local Marketplace is a **marketplace-facilitator model, not a merchant/retailer*
 | Data collected during Stripe KYC, order records, link-health-check records | **Privacy Policy** |
 | Listing standards, AI-content ban, mature-content tagging, enforcement ladder | **Community Guidelines** |
 
-Local Marketplace intentionally does **not** offer local/geo discovery, in-person meetups, or platform-hosted file storage — so we do not need meetup-safety guidance or file-hosting/escrow terms.
+VTuber Marketplace intentionally does **not** offer local/geo discovery, in-person meetups, or platform-hosted file storage — so we do not need meetup-safety guidance or file-hosting/escrow terms.
 
 ---
 

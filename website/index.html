@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Local Marketplace - Buy and sell nearby</title>
-  <meta name="description" content="Join early access for a local pickup marketplace. Browse nearby listings by ZIP and radius, list items for sale, message locally, and claim a Founding Seller code before launch." />
-  <meta property="og:title" content="Local Marketplace - Buy and sell nearby" />
-  <meta property="og:description" content="A local pickup marketplace for real items near your ZIP. Join the waitlist and claim Founding Seller perks before launch." />
+  <title>VTuber Marketplace — Pre-made digital VTuber assets</title>
+  <meta name="description" content="Browse and buy pre-made Live2D, VRM, PNGtuber, and VRChat assets worldwide. Real Stripe Connect checkout, seller-hosted delivery, OTU and P2U licensing." />
+  <meta property="og:title" content="VTuber Marketplace — Pre-made digital VTuber assets" />
+  <meta property="og:description" content="A global marketplace for pre-made VTuber assets with real payments, purchase-verified reviews, and seller-authored licensing." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://yourdomain.com/" />
   <meta name="theme-color" content="#0066FF" data-brand-theme-color />
@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/styles/landing.css?v=20260716a" />
+  <link rel="stylesheet" href="/styles/landing.css?v=20260721a" />
 </head>
 <body>
   <div class="page-bg" aria-hidden="true">
@@ -27,17 +27,17 @@
     <div class="container header-inner">
       <a class="brand" href="/">
         <img src="/assets/logo-mark.png" width="36" height="36" alt="" data-brand-logo />
-        <span data-brand-name>Local Marketplace</span>
+        <span data-brand-name>VTuber Marketplace</span>
       </a>
       <nav class="header-nav" aria-label="Primary">
         <a href="#marketplace">Marketplace</a>
         <a href="#app">App preview</a>
         <a href="#features">Features</a>
         <a href="#how">How it works</a>
-        <a href="#waitlist">Founding sellers</a>
+        <a href="#waitlist">Early access</a>
         <a href="#faq">FAQ</a>
       </nav>
-      <a class="btn btn-primary" href="#waitlist">Join waitlist</a>
+      <a class="btn btn-primary" href="/app/">Open web app</a>
       <button type="button" class="menu-toggle" id="menu-toggle" aria-label="Open menu">&#9776;</button>
     </div>
   </header>
@@ -46,16 +46,16 @@
     <section class="hero">
       <div class="container hero-grid">
         <div class="hero-copy reveal">
-          <span class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> Early access for local buyers and sellers</span>
-          <h1>Buy and sell nearby,<br /><span class="accent gradient-text">without shipping in the middle.</span></h1>
+          <span class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> Global marketplace for VTuber creators</span>
+          <h1>Pre-made VTuber assets,<br /><span class="accent gradient-text">licensed and delivered digitally.</span></h1>
           <p class="hero-lead">
-            <span data-brand-name>Local Marketplace</span> is built for local pickup: set your ZIP, choose a radius,
-            browse nearby listings, and message sellers in the app. Join before launch to claim a Founding Seller code.
+            <span data-brand-name>VTuber Marketplace</span> connects riggers, artists, and modelers with buyers worldwide.
+            Browse Live2D, VRM/FBX, PNGtuber, and VRChat-ready assets with clear OTU or P2U licensing and Stripe Connect checkout.
           </p>
           <div class="hero-stats">
-            <div class="hero-stat"><span class="hero-stat__value mono">ZIP</span><span class="hero-stat__label">local feed</span></div>
-            <div class="hero-stat"><span class="hero-stat__value mono">0.5-50</span><span class="hero-stat__label">mile radius</span></div>
-            <div class="hero-stat"><span class="hero-stat__value mono">21d</span><span class="hero-stat__label">standard listings</span></div>
+            <div class="hero-stat"><span class="hero-stat__value mono">OTU</span><span class="hero-stat__label">or P2U licenses</span></div>
+            <div class="hero-stat"><span class="hero-stat__value mono">10%</span><span class="hero-stat__label">platform commission</span></div>
+            <div class="hero-stat"><span class="hero-stat__value mono">Global</span><span class="hero-stat__label">digital catalog</span></div>
           </div>
 
           <form id="hero-waitlist-form" class="hero-quick-form" data-waitlist-form novalidate>
@@ -65,33 +65,31 @@
             </div>
             <div class="hero-quick-fields">
               <input class="hero-quick-input" type="email" id="hero-email" name="email" required autocomplete="email" placeholder="you@example.com" aria-label="Email address" />
-              <input class="hero-quick-input hero-quick-input--zip" type="text" id="hero-zip" name="zip" required inputmode="numeric" pattern="[0-9]{5}" maxlength="5" placeholder="ZIP" aria-label="Home ZIP code" />
-              <button type="submit" class="btn btn-primary btn-lg" id="hero-waitlist-submit" data-default-label="Claim my Founding spot">Claim my Founding spot <span class="btn-arrow" aria-hidden="true">&rarr;</span></button>
+              <button type="submit" class="btn btn-primary btn-lg" id="hero-waitlist-submit" data-default-label="Join early access">Join early access <span class="btn-arrow" aria-hidden="true">&rarr;</span></button>
             </div>
             <div id="hero-turnstile" data-turnstile-widget></div>
-            <p class="social-proof" data-social-proof><span class="social-proof__dot" aria-hidden="true"></span> <span data-social-proof-text>Be one of the first Founding Sellers in your area</span></p>
+            <p class="social-proof" data-social-proof><span class="social-proof__dot" aria-hidden="true"></span> <span data-social-proof-text>Get launch updates for new sellers and features</span></p>
             <div class="hero-form-message form-message" data-form-message role="status" aria-live="polite"></div>
           </form>
 
-          <ul class="founding-offer" aria-label="What every waitlist signup gets">
-            <li><span class="founding-offer__check" aria-hidden="true">&#10003;</span> <strong>Founding Seller badge</strong> after code redemption</li>
-            <li><span class="founding-offer__check" aria-hidden="true">&#10003;</span> <strong>10 monthly boosts</strong> for Founding Sellers</li>
+          <ul class="founding-offer" aria-label="What early access includes">
+            <li><span class="founding-offer__check" aria-hidden="true">&#10003;</span> <strong>Launch updates</strong> when the marketplace opens</li>
+            <li><span class="founding-offer__check" aria-hidden="true">&#10003;</span> <strong>Early seller onboarding</strong> for Stripe Connect</li>
             <li><span class="founding-offer__check" aria-hidden="true">&#10003;</span> Free to join, no spam</li>
           </ul>
-          <p class="hero-scarcity"><span class="hero-scarcity__dot" aria-hidden="true"></span> Founding Seller spots are limited by launch area. Join before your ZIP opens.</p>
-          <a class="hero-secondary-link" href="#how">See how local pickup works &rarr;</a>
+          <a class="hero-secondary-link" href="#how">See how digital delivery works &rarr;</a>
         </div>
 
-        <figure class="phone-mock reveal reveal-delay-2" aria-label="Local Marketplace app feed preview with example listings">
+        <figure class="phone-mock reveal reveal-delay-2" aria-label="VTuber Marketplace app feed preview with example listings">
           <div class="phone-frame">
             <div class="phone-screen app-feed-screen">
               <header class="app-screen-header">
-                <span class="app-screen-header__title">Near 10001 &middot; 10 mi</span>
+                <span class="app-screen-header__title">Browse · Live2D · P2U</span>
               </header>
               <div class="app-feed-body">
                 <div class="app-feed-filters">
                   <div class="app-feed-search-row">
-                    <div class="app-feed-search">Search</div>
+                    <div class="app-feed-search">Search assets</div>
                     <div class="app-feed-filter-btn app-feed-filter-btn--active">
                       <svg class="app-icon" width="18" height="18" viewBox="0 0 512 512" fill="none" aria-hidden="true">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M304 384v-80M304 256V80M208 384v-128M208 192V80M112 384v-224M112 288V80"/>
@@ -100,7 +98,7 @@
                       <span class="app-filter-badge">2</span>
                     </div>
                   </div>
-                  <p class="app-feed-summary">Newest &middot; Local pickup</p>
+                  <p class="app-feed-summary">Newest · Digital delivery</p>
                 </div>
                 <div class="app-feed-grid">
                   <article class="app-listing-card app-listing-card--boost">
@@ -109,9 +107,9 @@
                       <span class="app-listing-heart" aria-hidden="true">&#9825;</span>
                     </div>
                     <div class="app-listing-body">
-                      <p class="app-listing-price">$35</p>
-                      <h3 class="app-listing-title">Desk chair</h3>
-                      <p class="app-listing-meta">0.8 mi &middot; Boosted</p>
+                      <p class="app-listing-price">$89</p>
+                      <h3 class="app-listing-title">Live2D chibi model</h3>
+                      <p class="app-listing-meta">P2U · Featured</p>
                     </div>
                   </article>
                   <article class="app-listing-card app-listing-card--premium">
@@ -120,9 +118,9 @@
                       <span class="app-listing-heart" aria-hidden="true">&#9825;</span>
                     </div>
                     <div class="app-listing-body">
-                      <p class="app-listing-price">$18</p>
-                      <h3 class="app-listing-title">Controller</h3>
-                      <p class="app-listing-meta">2.1 mi &middot; Premium</p>
+                      <p class="app-listing-price">$120</p>
+                      <h3 class="app-listing-title">VRChat avatar</h3>
+                      <p class="app-listing-meta">OTU · Pro Seller</p>
                     </div>
                   </article>
                   <article class="app-listing-card">
@@ -131,9 +129,9 @@
                       <span class="app-listing-heart" aria-hidden="true">&#9825;</span>
                     </div>
                     <div class="app-listing-body">
-                      <p class="app-listing-price">$12</p>
-                      <h3 class="app-listing-title">Book bundle</h3>
-                      <p class="app-listing-meta">3.4 mi &middot; <span class="mini-badge mini-badge--founding">FOUNDING</span></p>
+                      <p class="app-listing-price">$25</p>
+                      <h3 class="app-listing-title">PNGtuber pack</h3>
+                      <p class="app-listing-meta">P2U · Verified reviews</p>
                     </div>
                   </article>
                   <article class="app-listing-card">
@@ -143,8 +141,8 @@
                     </div>
                     <div class="app-listing-body">
                       <p class="app-listing-price">$45</p>
-                      <h3 class="app-listing-title">Acoustic guitar</h3>
-                      <p class="app-listing-meta">5.0 mi</p>
+                      <h3 class="app-listing-title">Stream overlay set</h3>
+                      <p class="app-listing-meta">P2U</p>
                     </div>
                   </article>
                 </div>
@@ -180,32 +178,33 @@
     <section id="marketplace" class="economy-section">
       <div class="container">
         <div class="section-head reveal">
-          <p class="section-label">Local first</p>
-          <h2 class="section-title">A marketplace for nearby physical goods</h2>
+          <p class="section-label">Digital-first</p>
+          <h2 class="section-title">A marketplace for pre-made VTuber assets</h2>
           <p class="section-lead section-lead--center">
-            The app is designed for local pickup, not shipping, escrow, or item checkout. Buyers and sellers find each other by location, message in the app, meet safely, and handle payment their own way.
+            Sellers list rigged models, props, overlays, and accessories with their own OTU or P2U license text.
+            Buyers pay through Stripe Connect, receive a seller-hosted download link, and leave purchase-verified reviews.
           </p>
         </div>
         <div class="economy-grid">
           <article class="economy-card reveal">
             <div class="economy-card__icon" aria-hidden="true">01</div>
-            <h3>ZIP and radius feed</h3>
-            <p>Listings are filtered by a home ZIP and selectable mile radius, so the feed stays local instead of turning into a nationwide catalog.</p>
+            <h3>Global catalog</h3>
+            <p>No ZIP or radius filters — every listing is visible worldwide, filtered by category, license type, price, asset type, and compatible software.</p>
           </article>
           <article class="economy-card reveal reveal-delay-1">
             <div class="economy-card__icon" aria-hidden="true">02</div>
-            <h3>Post, favorite, message</h3>
-            <p>Sellers can create listings with photos. Buyers can search, save favorites, view seller profiles, and message about a specific listing.</p>
+            <h3>Real checkout</h3>
+            <p>Stripe Connect destination charges with tiered platform commission. Buyers cover Stripe processing fees and tax at checkout.</p>
           </article>
           <article class="economy-card reveal reveal-delay-2">
             <div class="economy-card__icon" aria-hidden="true">03</div>
             <h3>Safety and moderation</h3>
-            <p>Reports, blocked users, banned keywords, phone-verification gates, and admin review tools help keep the local feed manageable.</p>
+            <p>Reports, strikes for broken download links, mature-content age gating, AI-content bans, and admin review tools keep the catalog trustworthy.</p>
           </article>
           <article class="economy-card reveal reveal-delay-3">
             <div class="economy-card__icon" aria-hidden="true">04</div>
-            <h3>Launch with supply</h3>
-            <p>The waitlist issues Founding Seller codes so early sellers can claim a badge and monthly boosts after launch.</p>
+            <h3>Seller-hosted delivery</h3>
+            <p>The platform never stores asset files. Every order delivers through the seller's own download link with link-health monitoring.</p>
           </article>
         </div>
       </div>
@@ -216,41 +215,41 @@
       <div class="container">
         <div class="section-head reveal">
           <p class="section-label section-label--tech">APP PREVIEW</p>
-          <h2 class="section-title section-title--light">Built around the real marketplace workflow</h2>
+          <h2 class="section-title section-title--light">Built for VTuber commerce</h2>
           <p class="section-lead section-lead--light section-lead--center">
-            The launch page matches the app's core model: local browsing, real listing lifecycle rules, seller tools, and a founding seller program.
+            Listing creation, checkout, order delivery, DMs, Pro Seller subscriptions, and admin configuration — all in one Expo app and web export.
           </p>
         </div>
         <div class="app-showcase-grid reveal">
           <article class="app-showcase-card">
             <span class="app-showcase-card__tag mono">FEED</span>
-            <h3>Local discovery</h3>
-            <p>Home shows listings near the selected ZIP and radius. Buyers can sort by newest, closest, or lowest price.</p>
+            <h3>Filterable discovery</h3>
+            <p>Browse by category, license type, price, customization add-ons, compatible software, file format, and mature-content preferences.</p>
           </article>
           <article class="app-showcase-card">
             <span class="app-showcase-card__tag mono">LISTINGS</span>
-            <h3>Lifecycle built in</h3>
-            <p>Standard listings expire after 21 days. Premium listings can stay active for 2 months, then purge after the configured grace period.</p>
+            <h3>Publish requirements</h3>
+            <p>Every listing needs at least three photos, one validated YouTube demo video, seller-authored license text, and a working download URL before it goes live.</p>
           </article>
           <article class="app-showcase-card">
             <span class="app-showcase-card__tag mono">MESSAGES</span>
-            <h3>Listing-specific contact</h3>
-            <p>In-app direct messages are tied to individual listings and protected by phone verification, rate limits, and safety filters.</p>
+            <h3>Listing-specific DMs</h3>
+            <p>Buyers message sellers about a listing after email verification, with rate limits and banned-keyword filtering.</p>
           </article>
           <article class="app-showcase-card">
             <span class="app-showcase-card__tag mono">SELLERS</span>
-            <h3>Badges and boosts</h3>
-            <p>Founding Seller, Premium, and optional college badges help buyers understand who they are viewing without adding item checkout.</p>
+            <h3>Pro Seller perks</h3>
+            <p>Lower commission, Featured Listing credits, analytics, shop customization, and seller-scoped promo codes for active subscribers.</p>
           </article>
           <article class="app-showcase-card app-showcase-card--wide">
             <span class="app-showcase-card__tag mono">TRUST</span>
-            <h3>Signals that can appear in the app</h3>
+            <h3>Signals buyers can rely on</h3>
             <div class="badge-demo-row">
-              <span class="mini-badge mini-badge--founding">FOUNDING SELLER</span>
-              <span class="mini-badge mini-badge--premium">PREMIUM</span>
-              <span class="mini-badge mini-badge--college">College student</span>
+              <span class="mini-badge mini-badge--founding">PRO SELLER</span>
+              <span class="mini-badge mini-badge--premium">PURCHASE VERIFIED</span>
+              <span class="mini-badge mini-badge--college">OTU / P2U</span>
             </div>
-            <p class="app-showcase-card__foot">The buyer can keep, rename, or hide these programs based on their own launch strategy and admin settings.</p>
+            <p class="app-showcase-card__foot">License text is snapshotted into every order so buyers keep a permanent record of what they purchased.</p>
           </article>
         </div>
       </div>
@@ -260,34 +259,24 @@
       <div class="waitlist-section__glow" aria-hidden="true"></div>
       <div class="container waitlist-grid">
         <div class="reveal">
-          <p class="section-label">Founding Sellers</p>
-          <h2 class="section-title">Join the launch waitlist</h2>
+          <p class="section-label">Early access</p>
+          <h2 class="section-title">Join the launch list</h2>
           <p class="section-lead" style="margin-bottom: 0;">
-            Local marketplaces work best when there are real sellers ready before buyers arrive. Join the waitlist with your email and ZIP to claim a Founding Seller code for launch.
+            Be first to know when <span data-brand-name>VTuber Marketplace</span> opens for sellers and buyers. We will email launch updates — no spam.
           </p>
-          <div class="referral-teaser">
-            <p class="referral-teaser__title">Bring your area online faster</p>
-            <p>After you join, you get a personal invite link. Share it with neighbors, classmates, coworkers, or local groups so your ZIP opens with more listings.</p>
-          </div>
           <ul class="perks-list">
-            <li><span class="check" aria-hidden="true">&#10003;</span><span><strong>Founding Seller badge</strong> after you redeem your code in the app</span></li>
-            <li><span class="check" aria-hidden="true">&#10003;</span><span><strong>10 free monthly boosts</strong> for Founding Sellers</span></li>
-            <li><span class="check" aria-hidden="true">&#10003;</span><span><strong>Referral link</strong> to help build local supply before launch</span></li>
-            <li><span class="check" aria-hidden="true">&#10003;</span><span><strong>Launch updates</strong> for iPhone, Android, or web access</span></li>
+            <li><span class="check" aria-hidden="true">&#10003;</span><span><strong>Launch notifications</strong> for iPhone, Android, and web</span></li>
+            <li><span class="check" aria-hidden="true">&#10003;</span><span><strong>Early seller onboarding</strong> for Stripe Connect</span></li>
+            <li><span class="check" aria-hidden="true">&#10003;</span><span><strong>Product updates</strong> as categories and features roll out</span></li>
           </ul>
         </div>
 
         <div class="waitlist-forms-stack reveal reveal-delay-1">
           <div class="waitlist-card">
             <p class="waitlist-card__badge">iPhone, Android, and web</p>
-            <h2>Claim your Founding Seller spot</h2>
-            <p>Email and ZIP are enough to join. If this marketplace is not live in your area yet, we will send launch updates and your store link when your area opens.</p>
-            <ul class="card-perks" aria-label="Every signup can claim these launch perks">
-              <li><span class="card-perks__check" aria-hidden="true">&#10003;</span> <strong>Founding Seller badge</strong> on your profile after redemption</li>
-              <li><span class="card-perks__check" aria-hidden="true">&#10003;</span> <strong>10 free boosts every month</strong> for Founding Sellers</li>
-              <li><span class="card-perks__check" aria-hidden="true">&#10003;</span> Free to join, locked to your email, no spam</li>
-            </ul>
-            <p class="social-proof social-proof--card" data-social-proof><span class="social-proof__dot" aria-hidden="true"></span> <span data-social-proof-text>Be one of the first Founding Sellers in your area</span></p>
+            <h2>Get launch updates</h2>
+            <p>Enter your email to join early access. We will notify you when the marketplace opens.</p>
+            <p class="social-proof social-proof--card" data-social-proof><span class="social-proof__dot" aria-hidden="true"></span> <span data-social-proof-text>Join creators waiting for launch</span></p>
 
             <form id="waitlist-form" data-waitlist-form novalidate>
               <div class="form-group form-group--hp" aria-hidden="true">
@@ -299,14 +288,10 @@
                 <input type="email" id="email" name="email" required autocomplete="email" placeholder="you@example.com" />
               </div>
               <div class="form-group">
-                <label for="zip">Home ZIP code</label>
-                <input type="text" id="zip" name="zip" required inputmode="numeric" pattern="[0-9]{5}" maxlength="5" placeholder="10001" title="5-digit US ZIP for your home area" />
-              </div>
-              <div class="form-group">
                 <span id="role-label">I am here to <span class="label-optional">(optional)</span></span>
                 <div class="role-options" role="group" aria-labelledby="role-label">
-                  <label><input type="radio" name="role" value="buy" /> Buy / browse</label>
-                  <label><input type="radio" name="role" value="sell" /> Sell items</label>
+                  <label><input type="radio" name="role" value="buy" /> Buy assets</label>
+                  <label><input type="radio" name="role" value="sell" /> Sell assets</label>
                   <label><input type="radio" name="role" value="both" /> Both</label>
                 </div>
               </div>
@@ -325,33 +310,11 @@
             </form>
 
             <div id="founding-code-block" class="founding-code-block" hidden>
-              <p class="founding-code-label">You are on the waitlist - save this code</p>
+              <p class="founding-code-label">You are on the waitlist</p>
               <p class="founding-code-hint">
-                <strong>Copy and store this code now.</strong> We will email you when <span data-brand-name>Local Marketplace</span> goes live near your ZIP.
-                After launch, sign in with the <strong>same email</strong> and redeem under Settings &rarr; Redeem promo code.
+                We will email you when <span data-brand-name>VTuber Marketplace</span> launches.
+                After launch, sign in with the <strong>same email</strong> you used here.
               </p>
-              <div class="founding-code-row">
-                <code id="founding-code-value" class="founding-code-value"></code>
-                <button type="button" class="btn btn-secondary" id="copy-founding-code">Copy code</button>
-              </div>
-              <p class="founding-code-perks">Founding Seller badge &middot; 10 free boosts every month &middot; locked to your signup email</p>
-            </div>
-
-            <div id="referral-share-block" class="referral-share" hidden>
-              <p class="referral-share__title">Invite more local sellers</p>
-              <p class="referral-share__hint">
-                Share your link to help your ZIP open with more listings. The more supply nearby, the better the launch feed feels.
-              </p>
-              <div class="referral-share__row">
-                <input id="referral-share-link" class="referral-share__link" type="text" readonly aria-label="Your referral link" />
-                <button type="button" class="btn btn-secondary" id="copy-referral-link">Copy link</button>
-              </div>
-              <div class="referral-share__actions">
-                <button type="button" class="btn btn-ghost referral-share__btn" id="share-native" hidden>Share</button>
-                <a class="btn btn-ghost referral-share__btn" id="share-sms" href="#" rel="noopener">Text a friend</a>
-                <a class="btn btn-ghost referral-share__btn" id="share-x" href="#" target="_blank" rel="noopener">Post on X</a>
-              </div>
-              <p class="referral-share__count" data-referral-count-wrap hidden>Friends referred so far: <strong id="referral-count">0</strong></p>
             </div>
           </div>
         </div>
@@ -362,45 +325,45 @@
       <div class="container">
         <div class="section-head reveal">
           <p class="section-label">What is inside</p>
-          <h2 class="section-title">Everything needed for a local marketplace launch</h2>
+          <h2 class="section-title">Everything needed for a VTuber asset marketplace</h2>
           <p class="section-lead section-lead--center">
-            The public landing page feeds the waitlist. The app handles listings, messages, seller profiles, moderation, optional seller tools, and admin configuration.
+            The public landing page feeds early access. The app handles listings, checkout, delivery, messages, seller tools, moderation, and admin configuration.
           </p>
         </div>
         <div class="features-bento">
           <article class="feature-card feature-card--hero reveal">
-            <div class="feature-icon feature-icon--lg" aria-hidden="true">ZIP</div>
-            <h3>Local feed with practical controls</h3>
-            <p>Search, sort, category filters, ZIP-radius settings, favorites, listing detail pages, and seller profile views are all built around local pickup.</p>
+            <div class="feature-icon feature-icon--lg" aria-hidden="true">CAT</div>
+            <h3>Global feed with practical filters</h3>
+            <p>Search, sort, category filters, license-type toggles, favorites, listing detail pages, and seller shop views — all built for digital assets.</p>
             <div class="feature-hero-stat">
-              <span class="feature-hero-stat__value mono">No shipping</span>
-              <span class="feature-hero-stat__label">The marketplace connects local buyers and sellers but does not process item payments.</span>
+              <span class="feature-hero-stat__value mono">No file hosting</span>
+              <span class="feature-hero-stat__label">Sellers deliver through their own download links; the platform is a facilitator, not a CDN.</span>
             </div>
           </article>
           <article class="feature-card reveal reveal-delay-1">
-            <div class="feature-icon" aria-hidden="true">AD</div>
-            <h3>Seller tools</h3>
-            <p>Listing boosts, Premium seller status, Founding Seller credits, badges, and listing lifecycle rules help sellers get visibility.</p>
+            <div class="feature-icon" aria-hidden="true">$</div>
+            <h3>Stripe Connect commerce</h3>
+            <p>Destination charges, Pro Seller subscriptions, pay-per-use Featured placements, and model-support subscriptions for eligible listings.</p>
           </article>
           <article class="feature-card reveal reveal-delay-2">
             <div class="feature-icon" aria-hidden="true">DM</div>
             <h3>Direct messages</h3>
-            <p>Buyers message sellers inside listing-specific threads with phone-verification and safety checks before contact details are unlocked.</p>
+            <p>Buyers message sellers inside listing-specific threads with email verification, rate limits, and safety filters.</p>
           </article>
           <article class="feature-card reveal reveal-delay-1">
             <div class="feature-icon" aria-hidden="true">MOD</div>
             <h3>Moderation and admin</h3>
-            <p>Admins can review reports, manage users, configure categories, update branding, monitor setup status, and tune platform settings.</p>
+            <p>Admins review reports, manage strikes, configure categories, update branding, monitor setup status, and tune platform settings.</p>
           </article>
           <article class="feature-card reveal reveal-delay-2">
             <div class="feature-icon" aria-hidden="true">WEB</div>
             <h3>Mobile and web</h3>
-            <p>The codebase includes the Expo mobile app, Expo Router web app, static marketing pages, legal pages, and waitlist integration.</p>
+            <p>Expo mobile app, Expo Router web export at <code>/app</code>, static marketing pages, legal pages, and waitlist integration.</p>
           </article>
           <article class="feature-card reveal reveal-delay-3">
             <div class="feature-icon" aria-hidden="true">CFG</div>
-            <h3>White-label ready</h3>
-            <p>Branding, support email, categories, feed radius options, moderation thresholds, and email templates are designed to be buyer configurable.</p>
+            <h3>Runtime branding</h3>
+            <p>Logo, app name, support email, categories, fee tiers, moderation thresholds, and email templates are admin-configurable without a rebuild.</p>
           </article>
         </div>
       </div>
@@ -410,24 +373,24 @@
       <div class="container">
         <div class="section-head reveal">
           <p class="section-label section-label--light">How it works</p>
-          <h2 class="section-title section-title--light">From waitlist to local pickup</h2>
-          <p class="section-lead section-lead--light section-lead--center">The launch flow is simple enough for a new market and structured enough for real local supply.</p>
+          <h2 class="section-title section-title--light">From browse to download</h2>
+          <p class="section-lead section-lead--light section-lead--center">A straightforward flow for digital VTuber asset sales.</p>
         </div>
         <div class="steps">
           <div class="step-card reveal">
             <span class="step-card__num">01</span>
-            <h3>Join with ZIP</h3>
-            <p>Early users join the waitlist with email and home ZIP. Founding Sellers receive a code tied to that email.</p>
+            <h3>Discover assets</h3>
+            <p>Buyers browse the global catalog, filter by asset type and license, watch the required YouTube demo, and read seller-authored OTU or P2U terms.</p>
           </div>
           <div class="step-card reveal reveal-delay-1">
             <span class="step-card__num">02</span>
-            <h3>Post local listings</h3>
-            <p>Sellers publish real physical goods with photos, price, category, and pickup area. Buyers browse inside their selected radius.</p>
+            <h3>Checkout with Stripe</h3>
+            <p>Buyers pay through Stripe Connect. The platform takes its commission; sellers receive the remainder through their Connect account.</p>
           </div>
           <div class="step-card reveal reveal-delay-2">
             <span class="step-card__num">03</span>
-            <h3>Meet safely</h3>
-            <p>Buyers and sellers coordinate through listing messages, meet in public, inspect the item, and handle payment outside the app.</p>
+            <h3>Download from the seller</h3>
+            <p>After fulfillment, the buyer receives the seller-hosted download link recorded on the order. Purchase-verified reviews follow completed orders.</p>
           </div>
         </div>
       </div>
@@ -441,36 +404,28 @@
         </div>
         <div class="faq-list reveal">
           <details class="faq-details">
-            <summary>What is this marketplace for?</summary>
-            <p>It is for local pickup listings: furniture, gear, books, electronics, household items, and other physical goods that buyers and sellers can exchange nearby.</p>
+            <summary>What can be sold here?</summary>
+            <p>Pre-made digital VTuber assets: Live2D models, VRM/FBX models (including VRChat avatars and props), PNGtuber models, accessories, backgrounds, and overlays. Physical goods, freelance commissions, and AI-generated content are not allowed.</p>
           </details>
           <details class="faq-details">
-            <summary>Does the app handle item payments?</summary>
-            <p>No. Buyers and sellers arrange payment outside the app at meetup. The app may support optional seller tools such as boosts or Premium, but it does not process payment for listed items.</p>
+            <summary>Does the platform host the asset files?</summary>
+            <p>No. Sellers host their own files and provide download URLs. The platform monitors link health and applies strikes when links break, but never stores or proxies the files.</p>
           </details>
           <details class="faq-details">
-            <summary>How does the location feed work?</summary>
-            <p>Users set a home ZIP and radius in miles. The feed is filtered to listings inside that local area, with sorting for newest, closest, or lowest price.</p>
+            <summary>What are OTU and P2U licenses?</summary>
+            <p>OTU (One-Time-Use) transfers full rights for a single sale and delists the asset afterward. P2U (Pay-to-Use) grants non-exclusive usage rights and the listing can remain available to other buyers. Sellers write their own license text.</p>
           </details>
           <details class="faq-details">
-            <summary>What is a Founding Seller code?</summary>
-            <p>It is an early-access promo code generated by the waitlist. After launch, eligible users redeem it in the app to unlock Founding Seller status and monthly boost credits.</p>
+            <summary>How do payments work?</summary>
+            <p>All item sales run through Stripe Connect destination charges. The platform commission is 10% for free-tier sellers and 8% for Pro Seller subscribers (both admin-configurable).</p>
           </details>
           <details class="faq-details">
-            <summary>Can anyone join, or is it only for students?</summary>
-            <p>The marketplace can be open to everyone. The app also includes an optional college badge flow for buyers who want to identify verified student sellers.</p>
+            <summary>Can I review a listing without buying?</summary>
+            <p>No. Reviews are purchase-verified — you can review a listing only after a completed order for it.</p>
           </details>
           <details class="faq-details">
-            <summary>How long do listings stay active?</summary>
-            <p>Standard listings expire after 21 days. Premium listings can stay active for 2 months. Expired listings are permanently deleted after the configured grace period.</p>
-          </details>
-          <details class="faq-details">
-            <summary>How do buyers and sellers stay safe?</summary>
-            <p>Use in-app messages, meet in public, inspect items before paying, avoid deposits or gift cards, and report suspicious listings or users. See the <a href="/safety">Meetup Safety</a> page before meeting.</p>
-          </details>
-          <details class="faq-details">
-            <summary>When will my area open?</summary>
-            <p>Launch areas can open one ZIP cluster at a time. Join the waitlist so the team can see where buyer and seller demand is strongest.</p>
+            <summary>Is mature content allowed?</summary>
+            <p>Suggestive, non-explicit mature content is age-gated and blurred by default. Explicit sexual content and AI-generated content are banned.</p>
           </details>
         </div>
       </div>
@@ -479,10 +434,10 @@
     <section class="cta-band">
       <div class="container cta-band__inner reveal">
         <div>
-          <h2>Help launch the local feed in your area.</h2>
-          <p>Join the waitlist, claim Founding Seller perks, and be ready when listings open near your ZIP.</p>
+          <h2>Ready to browse VTuber assets?</h2>
+          <p>Open the web app or join the launch list for updates when new sellers go live.</p>
         </div>
-        <a class="btn btn-primary btn-lg btn-glow" href="#waitlist">Join the waitlist</a>
+        <a class="btn btn-primary btn-lg btn-glow" href="/app/">Open web app</a>
       </div>
     </section>
   </main>
@@ -493,17 +448,17 @@
         <div class="footer-brand">
           <a class="brand" href="/">
             <img src="/assets/logo-mark.png" width="32" height="32" alt="" data-brand-logo />
-            <span data-brand-name>Local Marketplace</span>
+            <span data-brand-name>VTuber Marketplace</span>
           </a>
-          <p>A local pickup marketplace with ZIP-radius browsing, seller tools, in-app messages, and Founding Seller waitlist support. [YOUR COMPANY LLC].</p>
+          <p>A global marketplace for pre-made digital VTuber assets with Stripe Connect checkout, seller-hosted delivery, and purchase-verified reviews. [YOUR COMPANY LLC].</p>
         </div>
         <div class="footer-col">
           <h4>Product</h4>
           <ul>
             <li><a href="#marketplace">Marketplace</a></li>
-            <li><a href="#app">App preview</a></li>
+            <li><a href="/app/">Web app</a></li>
             <li><a href="#features">Features</a></li>
-            <li><a href="#waitlist">Founding sellers</a></li>
+            <li><a href="#waitlist">Early access</a></li>
             <li><a href="#how">How it works</a></li>
           </ul>
         </div>
@@ -513,7 +468,6 @@
             <li><a href="/terms">Terms of Service</a></li>
             <li><a href="/privacy">Privacy Policy</a></li>
             <li><a href="/community">Community Guidelines</a></li>
-            <li><a href="/safety">Meetup Safety</a></li>
             <li><a href="/delete-account">Delete My Account</a></li>
             <li><a href="/legal">All legal pages</a></li>
           </ul>
@@ -526,12 +480,10 @@
     </div>
   </footer>
 
-  <script src="/scripts/waitlist-config.js?v=20260716a"></script>
-  <script src="/scripts/app-config.js?v=20260716a"></script>
-  <script src="/scripts/waitlist.js?v=20260716a"></script>
-  <script src="/scripts/landing-effects.js?v=20260716a"></script>
-  <!-- Bot protection is optional. It is a no-op until turnstileSiteKey is set
-       in waitlist-config.js and the matching secret is set in Supabase. -->
+  <script src="/scripts/waitlist-config.js?v=20260721a"></script>
+  <script src="/scripts/app-config.js?v=20260721a"></script>
+  <script src="/scripts/waitlist.js?v=20260721a"></script>
+  <script src="/scripts/landing-effects.js?v=20260721a"></script>
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileWidgetLoad" async defer></script>
 </body>
 </html>

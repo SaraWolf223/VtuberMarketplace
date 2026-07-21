@@ -1,167 +1,34 @@
-import { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  Pressable,
-  ActivityIndicator,
-  Alert,
-} from 'react-native';
-import { useRouter } from 'expo-router';
-import { useQueryClient } from '@tanstack/react-query';
-import { useAuth } from '@/hooks/useAuth';
-import { useAuthContext } from '@/providers/AuthProvider';
-import { useLocationPrefs } from '@/hooks/useLocationPrefs';
-import {
-  saveLocationPrefs,
-  invalidateFeedQueries,
-} from '@/features/profile/prefs-service';
-import { getCachedHomeZip } from '@/stores/prefs-store';
-import { formatRadiusLabel, parseRadiusMiles } from '@/types/enums';
-import { useRadiusOptions } from '@/hooks/useRadiusOptions';
+import { Redirect, useRouter } from 'expo-router';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { spacing, radius } from '@/theme/tokens';
-import { useThemeColors } from '@/hooks/useThemeColors';
 import { createThemedStyles } from '@/theme/useThemedStyles';
 import { fontSize, fontWeight } from '@/theme/typography';
 
 type LocationSetupScreenProps = {
-  /** First-time onboarding at root `/location-setup` (not settings sub-stack). */
+  /** @deprecated geo onboarding removed — screen is a stub/redirect only */
   isOnboarding?: boolean;
 };
 
+/** Legacy ZIP/radius screen — VTuber catalog is global; settings link redirects home. */
 export function LocationSetupScreen({
   isOnboarding = false,
 }: LocationSetupScreenProps): React.JSX.Element {
   const styles = useStyles();
-  const colors = useThemeColors();
   const router = useRouter();
-  const queryClient = useQueryClient();
-  const { user, session } = useAuth();
-  const { markLocationPrefsSaved, hasLocationPrefs } = useAuthContext();
-  const { homeZip: storedZip, radiusMiles: storedRadius, setRadiusMiles } = useLocationPrefs();
-  const radiusOptions = useRadiusOptions();
-  const [zip, setZip] = useState(storedZip);
-  const [radiusMiles, setRadiusLocal] = useState<number>(parseRadiusMiles(storedRadius, radiusOptions));
-  const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState<string | null>(null);
-  const [errorText, setErrorText] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (storedZip) setZip(storedZip);
-    // Clamp through the same options list as the initial state (below) — a
-    // radius saved before the admin lowered the max/options list would
-    // otherwise select a value no chip matches and the server will reject.
-    setRadiusLocal(parseRadiusMiles(storedRadius, radiusOptions));
-  }, [storedZip, storedRadius, radiusOptions]);
-
-  useEffect(() => {
-    if (!hasLocationPrefs || !isOnboarding) return;
-    const cleaned = storedZip.replace(/\D/g, '').slice(0, 5) || getCachedHomeZip();
-    if (cleaned.length === 5) {
-      router.replace('/');
-    }
-  }, [hasLocationPrefs, storedZip, router, isOnboarding]);
-
-  const selectRadius = (r: number) => {
-    setRadiusLocal(r);
-    setRadiusMiles(r);
-  };
-
-  const saveLocation = async () => {
-    const cleaned = zip.replace(/\D/g, '').slice(0, 5);
-    if (cleaned.length !== 5) {
-      Alert.alert('ZIP code', 'Enter a valid 5-digit US ZIP code.');
-      return;
-    }
-    if (!user || !session?.access_token) {
-      Alert.alert('Sign in required', 'Please sign out and sign in again.');
-      return;
-    }
-
-    setLoading(true);
-    setErrorText(null);
-    try {
-      setStatus('Looking up ZIP…');
-      const geo = await saveLocationPrefs({
-        accessToken: session.access_token,
-        homeZip: cleaned,
-        radiusMiles,
-      });
-
-      invalidateFeedQueries(queryClient, user.id);
-      markLocationPrefsSaved();
-
-      const place =
-        geo.city && geo.state ? `${geo.city}, ${geo.state}` : geo.city || geo.state || cleaned;
-
-      setLoading(false);
-
-      if (!isOnboarding && router.canGoBack()) {
-        Alert.alert('Location saved', `Showing listings near ${place}.`, [
-          { text: 'OK', onPress: () => router.back() },
-        ]);
-      } else {
-        setStatus('Opening app…');
-        router.replace('/');
-      }
-    } catch (e) {
-      const message = e instanceof Error ? e.message : 'Could not save location';
-      setErrorText(message);
-      setStatus(null);
-      Alert.alert('Could not save ZIP', message);
-      setLoading(false);
-    }
-  };
-
-  const showUpdateCopy = hasLocationPrefs && !isOnboarding;
+  if (isOnboarding) {
+    return <Redirect href="/(tabs)" />;
+  }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>
-        {showUpdateCopy ? 'Update home ZIP' : 'Set your home ZIP'}
+      <Text style={styles.title}>Location settings retired</Text>
+      <Text style={styles.body}>
+        This marketplace is global — listings are no longer filtered by ZIP or radius. Your feed uses
+        category, license, and asset filters instead.
       </Text>
-      <Text style={styles.sub}>
-        {showUpdateCopy
-          ? 'Change where you browse local listings. Saved to your account.'
-          : 'One-time setup — listings are filtered by distance from your ZIP.'}
-      </Text>
-      <TextInput
-        style={styles.input}
-        placeholder="e.g. 10001"
-        keyboardType="number-pad"
-        maxLength={5}
-        value={zip}
-        onChangeText={setZip}
-        editable={!loading}
-      />
-      <Text style={styles.label}>Search radius</Text>
-      <View style={styles.chips}>
-        {radiusOptions.map((r) => (
-          <Pressable
-            key={r}
-            style={[styles.chip, radiusMiles === r && styles.chipActive]}
-            onPress={() => selectRadius(r)}
-            disabled={loading}
-          >
-            <Text style={[styles.chipText, radiusMiles === r && styles.chipTextActive]}>
-              {formatRadiusLabel(r)}
-            </Text>
-          </Pressable>
-        ))}
-      </View>
-      {status ? <Text style={styles.status}>{status}</Text> : null}
-      {errorText ? <Text style={styles.error}>{errorText}</Text> : null}
-      <Pressable
-        style={[styles.button, loading && styles.buttonDisabled]}
-        onPress={saveLocation}
-        disabled={loading}
-      >
-        {loading ? (
-          <ActivityIndicator color={colors.onPrimary} />
-        ) : (
-          <Text style={styles.buttonText}>{showUpdateCopy ? 'Save ZIP' : 'Continue'}</Text>
-        )}
+      <Pressable style={styles.btn} onPress={() => router.replace('/(tabs)')}>
+        <Text style={styles.btnText}>Back to catalog</Text>
       </Pressable>
     </View>
   );
@@ -170,69 +37,27 @@ export function LocationSetupScreen({
 const useStyles = createThemedStyles((colors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
     padding: spacing.lg,
+    justifyContent: 'center',
     gap: spacing.md,
+    backgroundColor: colors.background,
   },
-  title: { fontSize: fontSize.h1, fontWeight: fontWeight.bold, color: colors.text },
-  sub: { fontSize: fontSize.body, color: colors.textSecondary },
-  label: {
-    fontSize: fontSize.caption,
+  title: {
+    fontSize: fontSize.h2,
     fontWeight: fontWeight.bold,
-    color: colors.textMuted,
-    textTransform: 'uppercase',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radius.md,
-    padding: spacing.md,
-    fontSize: fontSize.body,
-    backgroundColor: colors.surface,
     color: colors.text,
   },
-  chips: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.sm,
-  },
-  chip: {
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-    borderRadius: radius.full,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.surface,
-  },
-  chipActive: {
-    borderColor: colors.primary,
-    backgroundColor: colors.primary,
-  },
-  chipText: {
+  body: {
     fontSize: fontSize.body,
-    color: colors.text,
-    fontWeight: fontWeight.semibold,
-  },
-  chipTextActive: {
-    color: colors.onPrimary,
-  },
-  status: {
-    fontSize: fontSize.caption,
     color: colors.textSecondary,
+    lineHeight: 22,
   },
-  error: {
-    fontSize: fontSize.caption,
-    color: colors.error,
-  },
-  button: {
+  btn: {
     backgroundColor: colors.primary,
     paddingVertical: spacing.md,
     borderRadius: radius.md,
     alignItems: 'center',
     marginTop: spacing.sm,
-    minHeight: 48,
-    justifyContent: 'center',
   },
-  buttonDisabled: { opacity: 0.8 },
-  buttonText: { color: colors.onPrimary, fontWeight: fontWeight.semibold },
+  btnText: { color: colors.onPrimary, fontWeight: fontWeight.bold },
 }));

@@ -133,6 +133,33 @@ export function AdminReportCard({
     ]);
   };
 
+  const banAiContent = () => {
+    if (!subjectUserId) return;
+    Alert.alert(
+      'Ban for AI-generated content?',
+      'Confirmed AI-generated assets skip the warn ladder and result in an immediate account ban.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Ban account',
+          style: 'destructive',
+          onPress: () => {
+            void run('Account banned (AI content)', async () => {
+              await callAdminAction(accessToken, adminUserId, {
+                action: 'ban_ai_content',
+                user_id: subjectUserId,
+                listing_id: listing?.id ?? null,
+                report_id: report.id,
+                notes: warnNotes.trim() || undefined,
+              });
+              await notifyBestEffort({ userId: subjectUserId, action: 'ban_user' });
+            });
+          },
+        },
+      ]
+    );
+  };
+
   return (
     <View style={styles.card}>
       <Text style={styles.title}>
@@ -235,6 +262,11 @@ export function AdminReportCard({
 
         {subjectUserId ? (
           <>
+            {report.reason === 'ai_generated_content' ? (
+              <Pressable style={styles.dangerBtn} disabled={busy} onPress={banAiContent}>
+                <Text style={styles.dangerBtnText}>Ban (AI content)</Text>
+              </Pressable>
+            ) : null}
             <Pressable style={styles.warnBtn} disabled={busy} onPress={warnUser}>
               <Text style={styles.warnBtnText}>Warn</Text>
             </Pressable>

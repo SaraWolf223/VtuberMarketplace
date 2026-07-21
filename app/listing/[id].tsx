@@ -190,7 +190,7 @@ export default function ListingDetailScreen(): React.JSX.Element {
           {listing.is_own && boosted ? (
             <BoostTimer
               boostedUntil={listing.boosted_until}
-              prefix="Your boost"
+              prefix="Featured"
               style={styles.boostTimer}
             />
           ) : null}

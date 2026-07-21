@@ -263,7 +263,7 @@ cp .env.example .env
 # Fill all EXPO_PUBLIC_* values
 ```
 
-Either way, once the app is running, sign in and open **Admin → White-label → Setup status** (`/admin/setup-status`) for a live checklist of every account/key — client values and server-only Edge Function secrets — showing what's still missing or a placeholder, with a pointer to the relevant section of this doc for each.
+Either way, once the app is running, sign in and open **Admin → Platform branding → Setup status** (`/admin/setup-status`) for a live checklist of every account/key — client values and server-only Edge Function secrets — showing what's still missing or a placeholder, with a pointer to the relevant section of this doc for each.
 
 ### 9a. Bot protection (Cloudflare Turnstile, optional)
 
@@ -278,9 +278,7 @@ The website waitlist form and the web sign-up form support Cloudflare Turnstile 
 
 ## 9b. Branding: logo, colors, and the app icon/splash
 
-For the complete buyer workflow—including app identity, deep links, landing-page copy, legal details, native regeneration, and final QA—follow [36-Reskinning_Guide.md](./36-Reskinning_Guide.md).
-
-Most branding is **runtime-configurable** — promote your account to `admin` (see the admin panel's own instructions if it isn't yet), then use **Admin → White-label → Branding** to upload a logo, set the app display name/support email, and pick brand colors. Changes there apply instantly across the app and website — no rebuild.
+Most branding is **runtime-configurable** — promote your account to `admin` (see the admin panel's own instructions if it isn't yet), then use **Admin → Platform branding → Branding** to upload a logo, set the app display name/support email, and pick brand colors. Changes there apply instantly across the app and website — no rebuild.
 
 The **app icon, splash screen, Android adaptive icon, and web favicon** are the one exception: they're compiled into the native binary/web build, so changing them always needs a rebuild (true of any app, not a limitation of this one). Regenerate all of them from a single master logo with:
 

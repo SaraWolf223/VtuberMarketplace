@@ -241,7 +241,7 @@ npx supabase functions list      # deployed set matches repo
 
 - [ ] Terms, Privacy, Community Guidelines URLs live and match in-app links
 - [ ] Privacy Policy covers: Google auth, PostHog, Mapbox, Stripe, AdMob (when live), Supabase region
-- [ ] Meetup safety content current ([legal/MEETUP_SAFETY.md](./legal/MEETUP_SAFETY.md))
+- [ ] Legal pages regenerated and published (`npm run generate:legal`) — Terms, Privacy, Community Guidelines, Seller Agreement, Buyer Purchase Terms, DMCA
 - [ ] Lawyer review if adding new data types or monetization
 
 ### 5.3 Architecture review

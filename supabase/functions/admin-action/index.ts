@@ -22,7 +22,9 @@ type AdminAction =
   | 'extend_listing_expiry'
   | 'approve_seed_listing'
   | 'revoke_seed_approval'
-  | 'mark_seed_paid';
+  | 'mark_seed_paid'
+  | 'confirm_seller_strike'
+  | 'ban_ai_content';
 
 // Keep in sync with src/constants/seed.ts
 const SEED_PAID_CAP_PER_PERSON = 10;
@@ -46,10 +48,14 @@ Deno.serve(async (req) => {
     action?: AdminAction;
     listing_id?: string;
     user_id?: string;
+    seller_id?: string;
     report_id?: string;
     notes?: string;
     premium_months?: number | null;
     extend_days?: number;
+    link_health_check_id?: string;
+    reason?: string;
+    source?: 'automated_check' | 'buyer_report';
   };
 
   try {
@@ -752,6 +758,95 @@ Deno.serve(async (req) => {
     });
 
     return withCors(okResponse({ listing_id: body.listing_id, paid: true }));
+  }
+
+  if (action === 'confirm_seller_strike') {
+    if (!body.seller_id) {
+      return withCors(errorResponse('seller_id is required', 400, 'BAD_REQUEST'));
+    }
+    const sellerId = body.seller_id;
+    const strikeReason =
+      body.reason?.trim().slice(0, 500) ||
+      'Broken seller-hosted download link after grace period';
+    const strikeSource = body.source === 'buyer_report' ? 'buyer_report' : 'automated_check';
+
+    const { data: strikeResult, error: strikeError } = await admin.rpc('confirm_seller_strike', {
+      p_seller_id: sellerId,
+      p_listing_id: body.listing_id ?? null,
+      p_reason: strikeReason,
+      p_source: strikeSource,
+      p_confirmed_by: adminId,
+    });
+
+    if (strikeError) {
+      return withCors(errorResponse(strikeError.message, 500, 'STRIKE_FAILED'));
+    }
+
+    if (body.link_health_check_id) {
+      await admin
+        .from('link_health_checks')
+        .update({ issue_open: false, updated_at: new Date().toISOString() })
+        .eq('id', body.link_health_check_id);
+    }
+
+    await admin.from('moderation_actions').insert({
+      admin_id: adminId,
+      action: 'confirm_seller_strike',
+      user_id: sellerId,
+      listing_id: body.listing_id ?? null,
+      notes,
+    });
+
+    return withCors(okResponse(strikeResult ?? { ok: true }));
+  }
+
+  if (action === 'ban_ai_content') {
+    if (!body.user_id) {
+      return withCors(errorResponse('user_id is required', 400, 'BAD_REQUEST'));
+    }
+
+    const bannedAt = new Date().toISOString();
+    const { data: banned, error: banError } = await admin
+      .from('profiles')
+      .update({ banned_at: bannedAt })
+      .eq('id', body.user_id)
+      .is('banned_at', null)
+      .select('id')
+      .maybeSingle();
+
+    if (banError) {
+      return withCors(errorResponse(banError.message, 500, 'BAN_FAILED'));
+    }
+    if (!banned) {
+      return withCors(errorResponse('User not found or already banned', 404, 'NOT_FOUND'));
+    }
+
+    if (body.listing_id) {
+      await hardDeleteListing(admin, body.listing_id, { reviewedBy: adminId });
+    }
+
+    await closeAllOpenReportsForUser(body.user_id);
+
+    if (body.report_id) {
+      await admin
+        .from('reports')
+        .update({
+          status: 'reviewed',
+          reviewed_at: bannedAt,
+          reviewed_by: adminId,
+        })
+        .eq('id', body.report_id);
+    }
+
+    await admin.from('moderation_actions').insert({
+      admin_id: adminId,
+      action: 'ban_ai_content',
+      user_id: body.user_id,
+      listing_id: body.listing_id ?? null,
+      notes: notes ?? 'AI-generated content — immediate ban per policy',
+    });
+
+    return withCors(okResponse({ user_id: body.user_id, banned: true }));
   }
 
   return withCors(errorResponse('Unknown action', 400, 'BAD_REQUEST'));

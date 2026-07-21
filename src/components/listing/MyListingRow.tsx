@@ -6,8 +6,8 @@ import { myListingThumbPath } from '@/features/listings/my-listings-service';
 import { categoryLabel } from '@/features/listings/category-labels';
 import { formatListingPrice } from '@/utils/format-listing';
 import { formatExpiresCountdown } from '@/utils/expires-countdown';
-import { isListingBoosted } from '@/features/monetization/boost-service';
-import { BOOST_CHECKOUT, formatUsdFromCents } from '@/constants/stripe-fees';
+import { isListingFeatured } from '@/features/monetization/featured-service';
+import { FEATURED_CHECKOUT, formatUsdFromCents } from '@/constants/stripe-fees';
 import { BoostTimer } from '@/components/listing/BoostTimer';
 import { spacing, radius } from '@/theme/tokens';
 import { useThemeColors } from '@/hooks/useThemeColors';
@@ -19,13 +19,18 @@ type Props = {
   showExpiry: boolean;
   onPress: () => void;
   onEdit?: () => void;
+  onFeatureCredit?: () => void;
+  onFeaturePaid?: () => void;
+  onMarkSold?: () => void;
+  onDelete?: () => void;
+  busy?: boolean;
+  featureBusy?: boolean;
+  featuredCreditsRemaining?: number;
+  /** @deprecated */
   onBoostFree?: () => void;
   onBoostFounding?: () => void;
   onBoostPromo?: () => void;
   onBoostPaid?: () => void;
-  onMarkSold?: () => void;
-  onDelete?: () => void;
-  busy?: boolean;
   boostBusy?: boolean;
   freeBoostsRemaining?: number;
 };
@@ -35,22 +40,29 @@ export function MyListingRow({
   showExpiry,
   onPress,
   onEdit,
-  onBoostFree,
-  onBoostFounding,
-  onBoostPromo,
-  onBoostPaid,
+  onFeatureCredit,
+  onFeaturePaid,
   onMarkSold,
   onDelete,
   busy,
+  featureBusy,
+  featuredCreditsRemaining = 0,
+  onBoostFree,
+  onBoostPaid,
   boostBusy,
   freeBoostsRemaining = 0,
 }: Props): React.JSX.Element {
   const styles = useStyles();
   const colors = useThemeColors();
-  const boosted = isListingBoosted(item.boosted_until);
+  const featuredUntil = item.featured_until ?? item.boosted_until;
+  const featured = isListingFeatured(featuredUntil);
   const underReview = item.status === 'paused_pending_review';
   const thumb = myListingThumbPath(item);
   const thumbUri = thumb ? listingImagePublicUrl(thumb) : null;
+  const creditHandler = onFeatureCredit ?? onBoostFree;
+  const paidHandler = onFeaturePaid ?? onBoostPaid;
+  const actionBusy = featureBusy ?? boostBusy;
+  const creditsLeft = featuredCreditsRemaining || freeBoostsRemaining;
 
   return (
     <View style={styles.card}>
@@ -71,11 +83,11 @@ export function MyListingRow({
           {underReview ? (
             <Text style={styles.reviewBanner}>Under review — hidden from feed</Text>
           ) : null}
-          {boosted ? (
+          {featured ? (
             <BoostTimer
-              boostedUntil={item.boosted_until}
-              prefix="Boosted"
-              style={styles.boostedLabel}
+              boostedUntil={featuredUntil}
+              prefix="Featured"
+              style={styles.featuredLabel}
             />
           ) : null}
           {showExpiry ? (
@@ -91,7 +103,7 @@ export function MyListingRow({
       {onEdit || onMarkSold || onDelete ? (
         <View style={styles.actions}>
           {onEdit ? (
-            <Pressable style={styles.actionBtn} onPress={onEdit} disabled={busy || boostBusy}>
+            <Pressable style={styles.actionBtn} onPress={onEdit} disabled={busy || actionBusy}>
               <Text style={styles.actionText}>Edit</Text>
             </Pressable>
           ) : null}
@@ -111,66 +123,36 @@ export function MyListingRow({
           ) : null}
         </View>
       ) : null}
-      {onBoostFree || onBoostFounding || onBoostPromo || onBoostPaid ? (
-        <View style={[styles.actions, styles.boostActions]}>
-          {onBoostFree && freeBoostsRemaining > 0 ? (
+      {creditHandler || paidHandler ? (
+        <View style={[styles.actions, styles.featureActions]}>
+          {creditHandler && creditsLeft > 0 ? (
             <Pressable
               style={styles.actionBtn}
-              onPress={onBoostFree}
-              disabled={busy || boostBusy}
+              onPress={creditHandler}
+              disabled={busy || actionBusy}
             >
-              {boostBusy ? (
+              {actionBusy ? (
                 <ActivityIndicator size="small" color={colors.boost} />
               ) : (
-                <Text style={[styles.actionText, styles.boostText]} numberOfLines={1}>
-                  Free boost
+                <Text style={[styles.actionText, styles.featureText]} numberOfLines={1}>
+                  Use Featured credit
                 </Text>
               )}
             </Pressable>
           ) : null}
-          {onBoostFounding ? (
+          {paidHandler ? (
             <Pressable
               style={styles.actionBtn}
-              onPress={onBoostFounding}
-              disabled={busy || boostBusy}
+              onPress={paidHandler}
+              disabled={busy || actionBusy}
             >
-              {boostBusy && !(onBoostFree && freeBoostsRemaining > 0) ? (
+              {actionBusy && !(creditHandler && creditsLeft > 0) ? (
                 <ActivityIndicator size="small" color={colors.boost} />
               ) : (
-                <Text style={[styles.actionText, styles.boostText]} numberOfLines={1}>
-                  Founding boost
-                </Text>
-              )}
-            </Pressable>
-          ) : null}
-          {onBoostPromo ? (
-            <Pressable
-              style={styles.actionBtn}
-              onPress={onBoostPromo}
-              disabled={busy || boostBusy}
-            >
-              {boostBusy && !(onBoostFree && freeBoostsRemaining > 0) ? (
-                <ActivityIndicator size="small" color={colors.boost} />
-              ) : (
-                <Text style={[styles.actionText, styles.boostText]} numberOfLines={1}>
-                  Promo boost
-                </Text>
-              )}
-            </Pressable>
-          ) : null}
-          {onBoostPaid ? (
-            <Pressable
-              style={styles.actionBtn}
-              onPress={onBoostPaid}
-              disabled={busy || boostBusy}
-            >
-              {boostBusy && !(onBoostFree && freeBoostsRemaining > 0) && !onBoostPromo ? (
-                <ActivityIndicator size="small" color={colors.boost} />
-              ) : (
-                <Text style={[styles.actionText, styles.boostText]} numberOfLines={1}>
-                  {boosted
-                    ? `Boost again (${formatUsdFromCents(BOOST_CHECKOUT.totalCents)})`
-                    : `Boost ${formatUsdFromCents(BOOST_CHECKOUT.totalCents)}`}
+                <Text style={[styles.actionText, styles.featureText]} numberOfLines={1}>
+                  {featured
+                    ? `Feature again (${formatUsdFromCents(FEATURED_CHECKOUT.totalCents)})`
+                    : `Feature ${formatUsdFromCents(FEATURED_CHECKOUT.totalCents)}`}
                 </Text>
               )}
             </Pressable>
@@ -203,7 +185,7 @@ const useStyles = createThemedStyles((colors) => StyleSheet.create({
   title: { fontSize: fontSize.body, color: colors.text, fontWeight: fontWeight.semibold },
   meta: { fontSize: fontSize.caption, color: colors.textSecondary },
   metaMuted: { fontSize: fontSize.caption, color: colors.sold },
-  boostedLabel: {
+  featuredLabel: {
     fontSize: fontSize.caption,
     color: colors.boost,
     fontWeight: fontWeight.semibold,
@@ -221,8 +203,8 @@ const useStyles = createThemedStyles((colors) => StyleSheet.create({
     fontWeight: fontWeight.semibold,
     marginTop: spacing.xs,
   },
-  boostText: { color: colors.boost },
-  boostActions: {
+  featureText: { color: colors.boost },
+  featureActions: {
     borderTopWidth: 1,
     borderTopColor: colors.border,
     backgroundColor: colors.billGreenMuted,

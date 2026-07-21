@@ -570,7 +570,7 @@ Regenerate `database.ts` after each migration.
 
 ## 11. Runtime-configurable platform settings (admin-configurable at runtime)
 
-Renamed away from "White-label" framing (that terminology was tied to reselling the codebase itself, which no longer applies) but the **mechanism is unchanged**: these tables let the operator customize branding, categories, fee tiers, and email copy **without a code change or rebuild**.
+Renamed away from resale/template-buyer framing but the **mechanism is unchanged**: these tables let the operator customize branding, categories, fee tiers, and email copy **without a code change or rebuild**.
 
 ### `public_app_config`
 

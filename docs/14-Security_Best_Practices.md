@@ -1,6 +1,6 @@
 ﻿# Local Marketplace â€” Security Best Practices
 
-**Version:** 2.2 (white-label audit â€” see Â§12; DM system audit â€” see Â§13; admin-panel/RLS audit â€” see Â§14)
+**Version:** 2.2 (runtime branding audit — see §12; DM system audit — see §13; admin-panel/RLS audit — see §14)
 
 ---
 
@@ -26,7 +26,7 @@
 - Service role **only** in Edge Functions, never in app
 - Test via **client SDK** with two test users â€” SQL Editor bypasses RLS
 - CI: RLS integration tests (see **17-Testing_and_QA.md**)
-- White-label config tables (audited â€” see Â§12): `public_app_config` and `listing_categories` are intentionally public-read (branding/categories aren't secret, needed pre-auth) with admin-only write via `is_app_admin()`; `email_templates` is admin-only read+write (may contain internal ops wording); `rate_limit_events` has RLS enabled with **no policies at all** (service-role-only by construction â€” anon/authenticated get zero access)
+- Runtime branding config tables (audited — see §12): `public_app_config` and `listing_categories` are intentionally public-read (branding/categories aren't secret, needed pre-auth) with admin-only write via `is_app_admin()`; `email_templates` is admin-only read+write (may contain internal ops wording); `rate_limit_events` has RLS enabled with **no policies at all** (service-role-only by construction — anon/authenticated get zero access)
 
 ---
 
@@ -125,9 +125,9 @@
 
 ---
 
-## 12. White-label audit findings (Phase 9, this version)
+## 12. Runtime branding audit findings (Phase 9, this version)
 
-Audit performed when converting the codebase into a resellable white-label template. Findings and their resolution:
+Audit performed when converting the codebase from a resellable template into a single-product VTuber marketplace. Findings and their resolution:
 
 | Area | Finding | Resolution |
 |------|---------|------------|

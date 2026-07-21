@@ -156,7 +156,7 @@
       if (wrap) wrap.hidden = false;
     }
     const inviteText =
-      'I just grabbed a Founding Seller spot on Local Marketplace — cheap local pickup deals near you. Join the waitlist with my link:';
+      'Join the VTuber Marketplace waitlist — pre-made digital VTuber assets with real checkout.';
     if (shareSmsBtn) {
       shareSmsBtn.setAttribute(
         'href',
@@ -275,7 +275,7 @@
     // honest qualitative line that's already in the markup (never hide it).
     let text = '';
     if (total >= SOCIAL_PROOF_FLOOR) {
-      text = 'Join ' + formatCount(total) + ' early members claiming Founding Seller codes';
+      text = 'Join ' + formatCount(total) + ' creators on the early-access list';
     }
     nodes.forEach(function (node) {
       node.hidden = false;
@@ -352,8 +352,8 @@
       if (!navigator.share || !lastShareUrl) return;
       navigator
         .share({
-          title: 'Local Marketplace',
-          text: 'Join the Local Marketplace waitlist — cheap local pickup deals near you.',
+          title: 'VTuber Marketplace',
+          text: 'Join the VTuber Marketplace waitlist for launch updates.',
           url: lastShareUrl,
         })
         .catch(function () {
@@ -381,13 +381,12 @@
       return;
     }
 
-    const zipDigits = String(payload.zip).replace(/\D/g, '');
+    const zipDigits = String(payload.zip || '00000').replace(/\D/g, '');
     if (zipDigits.length !== 5) {
-      showMessage(form, 'Enter a valid 5-digit US ZIP code.', 'error');
-      setSubmitting(form, false);
-      return;
+      payload.zip = '00000';
+    } else {
+      payload.zip = zipDigits;
     }
-    payload.zip = zipDigits;
 
     if (!['buy', 'sell', 'both'].includes(payload.role)) {
       payload.role = 'both';
@@ -402,7 +401,7 @@
         showMessage(
           form,
           result.message ||
-            'You’re on the waitlist! Save your Founding Seller code below — we’ll email your store link on launch day.',
+            'You’re on the waitlist! We’ll email you when VTuber Marketplace launches.',
           'success'
         );
         try {
@@ -455,7 +454,7 @@
         if (!res.ok) throw new Error('Request failed');
         showMessage(
           form,
-          "You're on the list — we'll email when Local Marketplace opens near your ZIP.",
+          "You're on the list — we'll email when VTuber Marketplace launches.",
           'success'
         );
         form.reset();

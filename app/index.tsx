@@ -3,14 +3,13 @@ import { Redirect } from 'expo-router';
 import { Image } from 'expo-image';
 import { useAuthContext } from '@/providers/AuthProvider';
 import { useTermsAcceptance } from '@/hooks/useTermsAcceptance';
-import { getCachedHomeZip } from '@/stores/prefs-store';
 import { createThemedStyles } from '@/theme/useThemedStyles';
 import { useLogoMarkSource } from '@/hooks/useBrandLogo';
 import { useAppConfigStore } from '@/stores/app-config-store';
 
 export default function Index(): React.JSX.Element {
   const styles = useStyles();
-  const { isLoading, isSignedIn, hasLocationPrefs } = useAuthContext();
+  const { isLoading, isSignedIn } = useAuthContext();
   const { isLoading: termsLoading, needsAcceptance } = useTermsAcceptance();
   const logoSource = useLogoMarkSource();
   const appDisplayName = useAppConfigStore((s) => s.config.appDisplayName);
@@ -34,10 +33,6 @@ export default function Index(): React.JSX.Element {
 
   if (needsAcceptance) {
     return <Redirect href="/accept-terms" />;
-  }
-
-  if (!hasLocationPrefs && getCachedHomeZip().length !== 5) {
-    return <Redirect href="/location-setup" />;
   }
 
   return <Redirect href="/(tabs)" />;

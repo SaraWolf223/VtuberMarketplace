@@ -10,6 +10,10 @@ export type PublicAppConfig = {
   brandingColors: BrandColorOverrides;
   feedRadiusOptions: number[];
   maxRadiusMiles: number;
+  platformFeePercentFree: number;
+  platformFeePercentPro: number;
+  featuredPlacementDurationDays: number;
+  featuredPlacementPriceCents: number;
 };
 
 export const DEFAULT_PUBLIC_APP_CONFIG: PublicAppConfig = {
@@ -19,6 +23,10 @@ export const DEFAULT_PUBLIC_APP_CONFIG: PublicAppConfig = {
   brandingColors: {},
   feedRadiusOptions: [0.5, 1, 2, 5, 10, 25, 50],
   maxRadiusMiles: 50,
+  platformFeePercentFree: 0.1,
+  platformFeePercentPro: 0.08,
+  featuredPlacementDurationDays: 7,
+  featuredPlacementPriceCents: 500,
 };
 
 const HEX_COLOR_RE = /^#[0-9a-fA-F]{6}$/;
@@ -60,6 +68,18 @@ function sanitizeString(value: unknown, fallback: string, maxLen: number): strin
   return trimmed || fallback;
 }
 
+function sanitizeBps(value: unknown, fallbackPercent: number): number {
+  const raw = typeof value === 'number' ? value : parseInt(String(value ?? ''), 10);
+  if (!Number.isFinite(raw) || raw <= 0) return fallbackPercent;
+  return raw / 10_000;
+}
+
+function sanitizePositiveInt(value: unknown, fallback: number, max: number): number {
+  const n = typeof value === 'number' ? value : parseInt(String(value ?? ''), 10);
+  if (!Number.isFinite(n) || n <= 0) return fallback;
+  return Math.min(n, max);
+}
+
 /** Parse `public_app_config` rows (key/value JSONB) into a typed, sanitized config. */
 export function parsePublicAppConfig(rows: { key: string; value: unknown }[]): PublicAppConfig {
   const map = new Map(rows.map((r) => [r.key, r.value]));
@@ -79,5 +99,23 @@ export function parsePublicAppConfig(rows: { key: string; value: unknown }[]): P
     brandingColors: sanitizeColorOverrides(map.get('branding_colors')),
     feedRadiusOptions: sanitizeRadiusOptions(map.get('feed_radius_options')),
     maxRadiusMiles: sanitizeMaxRadius(map.get('max_radius_miles')),
+    platformFeePercentFree: sanitizeBps(
+      map.get('platform_fee_bps_free'),
+      DEFAULT_PUBLIC_APP_CONFIG.platformFeePercentFree
+    ),
+    platformFeePercentPro: sanitizeBps(
+      map.get('platform_fee_bps_pro'),
+      DEFAULT_PUBLIC_APP_CONFIG.platformFeePercentPro
+    ),
+    featuredPlacementDurationDays: sanitizePositiveInt(
+      map.get('featured_placement_duration_days'),
+      DEFAULT_PUBLIC_APP_CONFIG.featuredPlacementDurationDays,
+      90
+    ),
+    featuredPlacementPriceCents: sanitizePositiveInt(
+      map.get('featured_placement_price_cents'),
+      DEFAULT_PUBLIC_APP_CONFIG.featuredPlacementPriceCents,
+      100_000
+    ),
   };
 }

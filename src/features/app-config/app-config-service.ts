@@ -74,6 +74,10 @@ export async function updatePublicAppConfig(
     brandingColors?: BrandColorOverrides;
     feedRadiusOptions?: number[];
     maxRadiusMiles?: number;
+    platformFeeBpsFree?: number;
+    platformFeeBpsPro?: number;
+    featuredPlacementDurationDays?: number;
+    featuredPlacementPriceCents?: number;
   }
 ): Promise<void> {
   const { url, key } = getSupabaseEnv();
@@ -107,6 +111,30 @@ export async function updatePublicAppConfig(
       throw new Error('Enter at least one valid radius option');
     }
     rows.push({ key: 'feed_radius_options', value: opts });
+  }
+  if (updates.platformFeeBpsFree != null) {
+    if (!Number.isFinite(updates.platformFeeBpsFree) || updates.platformFeeBpsFree <= 0) {
+      throw new Error('Free-tier fee must be a positive basis-point value');
+    }
+    rows.push({ key: 'platform_fee_bps_free', value: updates.platformFeeBpsFree });
+  }
+  if (updates.platformFeeBpsPro != null) {
+    if (!Number.isFinite(updates.platformFeeBpsPro) || updates.platformFeeBpsPro <= 0) {
+      throw new Error('Pro Seller fee must be a positive basis-point value');
+    }
+    rows.push({ key: 'platform_fee_bps_pro', value: updates.platformFeeBpsPro });
+  }
+  if (updates.featuredPlacementDurationDays != null) {
+    if (!Number.isFinite(updates.featuredPlacementDurationDays) || updates.featuredPlacementDurationDays <= 0) {
+      throw new Error('Featured duration must be at least 1 day');
+    }
+    rows.push({ key: 'featured_placement_duration_days', value: updates.featuredPlacementDurationDays });
+  }
+  if (updates.featuredPlacementPriceCents != null) {
+    if (!Number.isFinite(updates.featuredPlacementPriceCents) || updates.featuredPlacementPriceCents <= 0) {
+      throw new Error('Featured price must be greater than zero');
+    }
+    rows.push({ key: 'featured_placement_price_cents', value: updates.featuredPlacementPriceCents });
   }
 
   if (rows.length === 0) return;

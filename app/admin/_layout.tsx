@@ -107,6 +107,7 @@ export default function AdminLayout(): React.JSX.Element {
       >
         <Stack.Screen name="index" options={{ title: panelTitle }} />
         <Stack.Screen name="moderation" options={{ title: 'Moderation' }} />
+        <Stack.Screen name="strikes" options={{ title: 'Strike queue' }} />
         <Stack.Screen name="sla" options={{ title: 'SLA & audit log' }} />
         <Stack.Screen name="warned-users" options={{ title: 'Warned users' }} />
         <Stack.Screen name="banned-users" options={{ title: 'Banned users' }} />

@@ -18,14 +18,9 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
 import { useSellerBenefits } from '@/hooks/useSellerBenefits';
-import { isPremiumActive } from '@/features/monetization/premium-service';
+import { isProSellerOrLegacyPremium } from '@/features/monetization/pro-seller-service';
 import { isPhoneVerified } from '@/hooks/usePhoneVerification';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
-import {
-  daysUntil,
-  isCollegeBadgeActive,
-  isInCollegeReverifyGrace,
-} from '@/features/college/college-badge-service';
 import { isStaffRole, staffPanelTitle } from '@/lib/admin-access';
 import { useMfaStatus } from '@/hooks/useMfaStatus';
 import { queryKeys } from '@/lib/query-keys';
@@ -102,19 +97,15 @@ export default function SettingsScreen(): React.JSX.Element {
     setFieldsLoadedForUserId(user.id);
   }, [profile, user?.id, fieldsLoadedForUserId]);
 
-  const premiumActive =
-    benefitsPremium || isPremiumActive(!!profile?.is_premium, profile?.premium_until);
+  const proSellerActive =
+    benefitsPremium ||
+    isProSellerOrLegacyPremium(profile as {
+      is_pro_seller?: boolean;
+      pro_seller_until?: string | null;
+      is_premium?: boolean;
+      premium_until?: string | null;
+    });
   const phoneVerified = profile ? isPhoneVerified(profile) : false;
-  const profileCollege = profile as {
-    college_badge_expires_at?: string | null;
-    college_reverify_deadline_at?: string | null;
-  } | undefined;
-  const collegeActive = isCollegeBadgeActive(profileCollege?.college_badge_expires_at);
-  const collegeGrace = isInCollegeReverifyGrace(
-    profileCollege?.college_badge_expires_at,
-    profileCollege?.college_reverify_deadline_at
-  );
-  const collegeGraceDays = daysUntil(profileCollege?.college_reverify_deadline_at);
 
   const canChangeUsername = (): boolean => {
     if (!profile?.username_changed_at) return true;
@@ -347,35 +338,17 @@ export default function SettingsScreen(): React.JSX.Element {
         />
       </SettingsSection>
 
-      <SettingsSection title="Location & verification">
-        <SettingsRow
-          title="Home ZIP & radius"
-          subtitle="Controls which listings you see in the feed"
-          onPress={() => router.push('/settings/location')}
-        />
+      <SettingsSection title="Seller verification">
         <SettingsRow
           title="Phone verification"
           subtitle={
             phoneVerified
-              ? 'Required for messaging — you are verified'
-              : 'Required before you can send DMs'
+              ? 'Required for publishing listings and Stripe payouts'
+              : 'Verify before you can publish listings or receive payouts'
           }
           badge={phoneVerified ? 'Verified' : 'Required'}
           badgeTone={phoneVerified ? 'success' : 'warning'}
           onPress={() => router.push('/settings/verify-phone')}
-        />
-        <SettingsRow
-          title="College student badge"
-          subtitle={
-            collegeActive
-              ? 'Active on your profile — renew yearly'
-              : collegeGrace
-                ? `Re-verify within ${collegeGraceDays ?? 10} day${(collegeGraceDays ?? 10) === 1 ? '' : 's'}`
-                : 'Verify a .edu email for the college badge'
-          }
-          badge={collegeActive ? 'Active' : collegeGrace ? 'Re-verify' : undefined}
-          badgeTone={collegeActive ? 'success' : collegeGrace ? 'warning' : undefined}
-          onPress={() => router.push('/settings/verify-college-email')}
           isLast
         />
       </SettingsSection>
@@ -395,7 +368,7 @@ export default function SettingsScreen(): React.JSX.Element {
         {Platform.OS !== 'web' ? (
           <SettingsRow
             title="Push notifications"
-            subtitle="Messages, deals, and expiring-listing alerts"
+            subtitle="Messages, orders, and listing alerts"
             rightElement={
               pushLoading ? (
                 <ActivityIndicator color={colors.primary} size="small" />
@@ -421,9 +394,9 @@ export default function SettingsScreen(): React.JSX.Element {
 
       <SettingsSection title="Selling & ads">
         <SettingsRow
-          title={premiumActive ? 'Pro Seller' : 'Upgrade to Pro Seller'}
+          title={proSellerActive ? 'Pro Seller' : 'Upgrade to Pro Seller'}
           subtitle={
-            premiumActive
+            proSellerActive
               ? 'Manage membership, sales, and Featured credits'
               : 'Lower fees, Featured credits, promo codes & timed sales'
           }
@@ -439,6 +412,11 @@ export default function SettingsScreen(): React.JSX.Element {
           title="Seller payouts"
           subtitle="Stripe Connect onboarding for digital sales"
           onPress={() => router.push('/settings/payouts')}
+        />
+        <SettingsRow
+          title="Orders & downloads"
+          subtitle="Purchases, sales, and deliverable links"
+          onPress={() => router.push('/library/orders')}
         />
         <SettingsRow
           title="Support subscriptions"

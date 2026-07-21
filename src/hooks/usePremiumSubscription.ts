@@ -4,15 +4,17 @@ import * as WebBrowser from 'expo-web-browser';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/hooks/useAuth';
 import { usePhoneVerificationGate } from '@/hooks/usePhoneVerificationGate';
-import { PREMIUM_FREE_BOOSTS_PER_MONTH } from '@/constants/premium';
+import { PRO_SELLER_FEATURED_CREDITS_PER_MONTH } from '@/constants/pro-seller';
 import { PREMIUM_CHECKOUT_REDIRECT } from '@/constants/stripe';
 import {
   canUseStripePaidMonetization,
   IOS_PAID_MONETIZATION_DISABLED_MESSAGE,
   IOS_PAID_MONETIZATION_DISABLED_TITLE,
 } from '@/features/monetization/platform-payments';
-import { createPremiumCheckout } from '@/features/monetization/premium-service';
-import { syncPremiumAccount } from '@/features/monetization/seller-benefits-service';
+import {
+  createProSellerCheckout,
+  syncProSellerAccount,
+} from '@/features/monetization/pro-seller-service';
 import { queryKeys } from '@/lib/query-keys';
 
 function waitForUi(): Promise<void> {
@@ -23,7 +25,7 @@ function waitForUi(): Promise<void> {
   });
 }
 
-async function refreshPremiumQueries(
+async function refreshProSellerQueries(
   queryClient: ReturnType<typeof useQueryClient>,
   userId: string
 ): Promise<void> {
@@ -39,9 +41,9 @@ async function activateAfterCheckout(
   userId: string
 ): Promise<boolean> {
   for (let attempt = 0; attempt < 5; attempt += 1) {
-    const synced = await syncPremiumAccount(token, sessionId);
-    if (synced.premium_active) {
-      await refreshPremiumQueries(queryClient, userId);
+    const synced = await syncProSellerAccount(token, sessionId);
+    if (synced.pro_seller_active || synced.premium_active) {
+      await refreshProSellerQueries(queryClient, userId);
       return true;
     }
     await new Promise((r) => setTimeout(r, 1500));
@@ -61,11 +63,11 @@ export function usePremiumSubscription() {
 
     const token = session?.access_token;
     if (!user?.id || !token) {
-      Alert.alert('Sign in', 'Sign in to subscribe to Premium.');
+      Alert.alert('Sign in', 'Sign in to subscribe to Pro Seller.');
       return;
     }
 
-    if (!requireVerification('Premium subscription')) {
+    if (!requireVerification('Pro Seller subscription')) {
       return;
     }
 
@@ -86,14 +88,14 @@ export function usePremiumSubscription() {
     try {
       await waitForUi();
 
-      const existing = await syncPremiumAccount(token);
-      if (existing.premium_active) {
-        await refreshPremiumQueries(queryClient, user.id);
-        Alert.alert('Already Premium', 'Your Premium subscription is already active.');
+      const existing = await syncProSellerAccount(token);
+      if (existing.pro_seller_active || existing.premium_active) {
+        await refreshProSellerQueries(queryClient, user.id);
+        Alert.alert('Already Pro Seller', 'Your Pro Seller subscription is already active.');
         return;
       }
 
-      const checkout = await createPremiumCheckout(token);
+      const checkout = await createProSellerCheckout(token);
 
       await WebBrowser.openAuthSessionAsync(checkout.checkout_url, PREMIUM_CHECKOUT_REDIRECT);
 
@@ -106,22 +108,22 @@ export function usePremiumSubscription() {
 
       if (activated) {
         Alert.alert(
-          'Welcome to Premium!',
-          `You're all set — ${PREMIUM_FREE_BOOSTS_PER_MONTH} free boosts this month and Premium badge are active.`
+          'Welcome to Pro Seller!',
+          `You're all set — ${PRO_SELLER_FEATURED_CREDITS_PER_MONTH} Featured credits this month and the 8% fee tier are active.`
         );
       } else {
         Alert.alert(
           'Payment received?',
-          'If you finished checkout, wait a moment and pull to refresh this screen. Premium activates right after payment.'
+          'If you finished checkout, wait a moment and pull to refresh this screen. Pro Seller activates right after payment.'
         );
       }
     } catch (e) {
       const message = e instanceof Error ? e.message : 'Subscription failed';
-      if (message.includes('ALREADY_PREMIUM')) {
-        await refreshPremiumQueries(queryClient, user.id);
-        Alert.alert('Already Premium', 'Your Premium subscription is already active.');
+      if (message.includes('ALREADY_PRO_SELLER') || message.includes('ALREADY_PREMIUM')) {
+        await refreshProSellerQueries(queryClient, user.id);
+        Alert.alert('Already Pro Seller', 'Your Pro Seller subscription is already active.');
       } else {
-        Alert.alert('Premium', message);
+        Alert.alert('Pro Seller', message);
       }
     } finally {
       inFlightRef.current = false;
@@ -133,9 +135,9 @@ export function usePremiumSubscription() {
     const token = session?.access_token;
     if (!token || !user?.id) return false;
 
-    const synced = await syncPremiumAccount(token);
-    await refreshPremiumQueries(queryClient, user.id);
-    return synced.premium_active;
+    const synced = await syncProSellerAccount(token);
+    await refreshProSellerQueries(queryClient, user.id);
+    return !!(synced.pro_seller_active || synced.premium_active);
   }, [session?.access_token, user?.id, queryClient]);
 
   return { subscribe, subscribing, syncFromStripe };

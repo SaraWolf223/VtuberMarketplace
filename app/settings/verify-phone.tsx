@@ -71,7 +71,7 @@ export default function VerifyPhoneScreen(): React.JSX.Element {
     try {
       await verifyPhoneOtpAndSyncProfile(e164 || phone, code, token);
       await invalidateProfile();
-      Alert.alert('Phone verified', 'You can publish listings, send messages, and use paid features.', [
+      Alert.alert('Phone verified', 'You can publish listings and receive payouts.', [
         { text: 'OK', onPress: () => router.back() },
       ]);
     } catch (e) {

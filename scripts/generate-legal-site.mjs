@@ -150,7 +150,7 @@ const home = `<!DOCTYPE html>
 <body>
   <nav><a href="/">← ${escapeHtml(identity.appName)} home</a></nav>
   <h1>${escapeHtml(identity.appName)} Legal</h1>
-  <p>Cheap local deals, near you.</p>
+  <p>Global marketplace for pre-made digital VTuber assets.</p>
   <ul>
     ${PAGES.map((p) => `<li><a href="/${p.slug}">${escapeHtml(p.title)}</a></li>`).join('\n    ')}
   </ul>

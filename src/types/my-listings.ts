@@ -14,10 +14,12 @@ export type MyListingItem = {
   description: string | null;
   price: number;
   category: ListingCategory;
-  zip_code: string;
+  zip_code?: string | null;
   status: MyListingStatus | 'draft' | 'deleted' | 'paused_pending_review';
   expires_at: string;
   published_at: string;
   boosted_until: string | null;
+  /** Preferred VTuber field — maps from API when present */
+  featured_until?: string | null;
   listing_images: MyListingImage[];
 };

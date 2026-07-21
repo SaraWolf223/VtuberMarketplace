@@ -4,44 +4,42 @@
 
 **Last updated:** 2026-07-21
 
-**Summary:** Workspace converted toward **VtuberMarketplace** — global digital VTuber asset marketplace (Live2D / 3D / VRChat / PNGtuber / accessories / backgrounds) with Stripe Connect, OTU/P2U licensing, seller-hosted delivery, Pro Seller tools, model-support subscriptions, seller socials/portfolio, profile bulletin, feed thumbnails, and discovery filters.
+**Summary:** VTuber Marketplace conversion plan implemented: global digital VTuber asset marketplace with Stripe Connect, OTU/P2U licensing, seller-hosted delivery, Pro Seller + Featured, support subscriptions, seller socials/bulletin, strikes, and admin fee/strike tools.
 
-**Current phase:** Schema + docs + core feature surfaces landed; residual physical-goods cleanup and Pro Seller/Featured edge parity remain.
+**Current phase:** Code conversion complete for plan todos; human deploy of migrations/edge functions + store launch remain.
 
 ## Now / Next / Later
 
 ### Now
 
-- [x] Rewrite `AGENTS.md` hard constraints for the VTuber marketplace domain
-- [x] Core product docs + legal stack patches for VTuber domain and seller-social/support features
-- [x] Database migrations `121`–`140` (digital listings, orders, Connect/Pro, support subs, portfolio, bulletin, sales, feed thumbnails/filters)
-- [x] Edge: support plan/subscription/quote checkout + webhook; portfolio upload; Connect onboarding + order checkout (destination charges)
-- [x] Frontend: profile socials/portfolio/bulletin; support subscribe/quote; Pro Seller promo/sale UI; feed thumbnail; price/date/rating filters; Buy CTA; seller payouts settings
-- [x] Admin: bulletin moderation + support subscription/quote moderation
-- [x] Feed de-geo: global catalog browse without ZIP gate
-- [x] Messaging email-verification gate; purchase-verified reviews client alignment
-- [ ] Finish residual conversion: Pro Seller / Featured checkout parity; remove leftover boost/premium/meetup UI; college/waitlist/seed cleanup
-- [x] Typecheck pass (`npm run typecheck` clean)
-- [x] Initial git commit + push (repo: https://github.com/SaraWolf223/VtuberMarketplace — `UjuComics/VtuberMarketplace` was not creatable with the active `gh` account)
-- [ ] Human deploy of migrations `121`–`140` + new edge functions
-- [ ] Transfer/rename remote to `UjuComics/VtuberMarketplace` when that org/account is available
+- [x] Rewrite `AGENTS.md` + backlog for VTuber domain
+- [x] Remove resale/white-label-for-sale collateral; re-label Store settings
+- [x] Core product docs + legal stack (marketplace facilitator)
+- [x] Database migrations `121`–`140`
+- [x] Edge: Connect, order checkout, Pro Seller/Featured, YouTube validate, link health, support/portfolio, webhook
+- [x] Frontend: listings (asset/license/YouTube/download), feed filters, orders library, membership, messaging, reviews, strikes
+- [x] Admin: fee tiers, strike queue, AI-content ban action
+- [x] Cleanup physical gates (location/ZIP hard requirement)
+- [x] Typecheck clean; lint 0 errors (warnings only)
+- [x] Git push (active remote: https://github.com/SaraWolf223/VtuberMarketplace)
+- [ ] Human deploy migrations + edge functions; set `STRIPE_PRICE_PRO_SELLER`, `YOUTUBE_DATA_API_KEY`
+- [ ] Transfer remote to `UjuComics/VtuberMarketplace` when org access is available
 
 ### Later
 
-- [ ] Human setup: Stripe Connect platform, YouTube Data API, Supabase project for `VtuberMarketplace`
-- [ ] Full QA (typecheck, lint, security, web, device) after deploy
-- [ ] Production legal review (attorney sign-off), payment, moderation, and store-release review
+- [ ] Full device/web QA after deploy
+- [ ] Attorney review of legal stack
+- [ ] Delete unused legacy routes (waitlist/seed/college) after confirmation
+- [ ] Regenerate static legal HTML after filling `docs/legal/ENTITY.md` placeholders
 
 ## Session log
 
-### 2026-07-21 — Seller social / support / discovery + conversion resume
+### 2026-07-21 — Conversion plan completion
 
-- Migrations `136`–`140`: listing support plans/subscriptions/quotes; seller portfolio/socials; bulletin board; listing sale periods + Pro promo gates; feed thumbnails + date/rating filters.
-- Docs/legal patches for support subscriptions, quotes, portfolio, bulletin, sales, privacy.
-- Edge: `upsert-listing-support-plan`, `create-support-subscription-checkout`, `create-support-quote-checkout`, `upload-portfolio-image`, Connect/order checkout helpers, webhook extensions.
-- Frontend: shop profile, showcase upload, bulletin on public profile, support UI, quotes, Pro discounts, sell-flow feed thumbnail, global feed filters, Buy + payouts settings, admin bulletin/support queues.
-- Resumed conversion: feed geo removal, email-gated DMs, purchase-verified reviews, Connect + order checkout edges, digital-delivery copy.
+- Finished remaining conversion todos: Pro Seller/Featured edge functions, `validate-youtube-video`, `check-listing-links`, VTuber `create-listing`, sell flow (asset/license/YouTube/download), orders library, feed license/add-on filters, geocode 410 stub, admin/membership/strikes from parallel workstreams.
+- QA: `npm run typecheck` pass; lint warnings only.
+- Pushed to SaraWolf223/VtuberMarketplace (gh auth cannot create under UjuComics).
 
-### 2026-07-21 — VTuber marketplace conversion (earlier)
+### 2026-07-21 — Seller social / support / discovery
 
-- Rewrote `AGENTS.md` hard constraints: Stripe Connect (10%/8%), seller-hosted delivery, OTU/P2U, no ZIP/radius, no fixed expiry, purchase-verified reviews, email-gated DMs, AI-content ban, marketplace-facilitator liability, mature age-gating, VRChat-inclusive categories.
+- Migrations `136`–`140`, support/portfolio/bulletin/sales UI, Connect/order checkout foundations.

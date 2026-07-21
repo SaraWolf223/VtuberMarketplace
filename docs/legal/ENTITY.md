@@ -1,10 +1,10 @@
-# Local Marketplace — canonical legal entity
+# VTuber Marketplace — canonical legal entity
 
 Single source of truth for placeholders across `docs/legal/*.md`. Update here first, then sync other files.
 
 | Field | Value |
 |-------|-------|
-| **App display name** | Local Marketplace |
+| **App display name** | VTuber Marketplace |
 | **Production domain** | yourdomain.com |
 | **Legal operator** | [YOUR COMPANY LLC] |
 | **Effective date** | [EFFECTIVE DATE — set when you publish] |

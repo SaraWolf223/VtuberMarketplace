@@ -1,12 +1,12 @@
-# Local Marketplace Community Guidelines
+# VTuber Marketplace Community Guidelines
 
 > **Pre-production draft.** Recommend licensed attorney review before major scaling. Not legal advice.
 
 **Last updated:** [LAST UPDATED DATE — see docs/legal/ENTITY.md]
 
-These Community Guidelines are **incorporated into** our [Terms of Service](./TERMS_OF_SERVICE.md). They explain what belongs on Local Marketplace and what happens when rules are broken.
+These Community Guidelines are **incorporated into** our [Terms of Service](./TERMS_OF_SERVICE.md). They explain what belongs on VTuber Marketplace and what happens when rules are broken.
 
-Local Marketplace is a **global marketplace for pre-made digital VTuber assets** — 2D Live2D models, 3D/VRM/FBX models (including VRChat avatars and props), PNGtuber models, accessories, and backgrounds/overlays. It is not a commission/freelance board and not a local/in-person marketplace.
+VTuber Marketplace is a **global marketplace for pre-made digital VTuber assets** — 2D Live2D models, 3D/VRM/FBX models (including VRChat avatars and props), PNGtuber models, accessories, and backgrounds/overlays. It is not a commission/freelance board and not a local/in-person marketplace.
 
 ---
 
@@ -47,7 +47,7 @@ We may remove content that is **unsafe, deceptive, or harmful** even if not list
 
 ## Part B — Licensing responsibility
 
-- **You author your own OTU/P2U license text.** Local Marketplace does not provide a mandatory license template and does not warrant or interpret your license terms — see the [Seller Agreement](./SELLER_AGREEMENT.md).
+- **You author your own OTU/P2U license text.** VTuber Marketplace does not provide a mandatory license template and does not warrant or interpret your license terms — see the [Seller Agreement](./SELLER_AGREEMENT.md).
 - **You are responsible for your download link's uptime and content.** A broken link that fails our automated health checks, or that is confirmed via a buyer report after a grace period, results in a **strike**. **Three (3) non-expired strikes within a rolling 12-month window result in an automatic account ban.**
 
 ---
@@ -71,7 +71,7 @@ We may remove content that is **unsafe, deceptive, or harmful** even if not list
 - Circumvent a ban with new accounts
 - Leave a review without a completed (`fulfilled`) order for that listing, or manipulate/incentivize reviews
 - Share others' private info without consent
-- Use Local Marketplace for phishing, pyramid schemes, or off-platform payment traps
+- Use VTuber Marketplace for phishing, pyramid schemes, or off-platform payment traps
 
 ---
 
@@ -129,7 +129,7 @@ We will review when possible but do not guarantee reinstatement.
 
 ## Part H — Changes
 
-We may update these Guidelines. Continued use of Local Marketplace means you follow the current version posted in-app and on our website.
+We may update these Guidelines. Continued use of VTuber Marketplace means you follow the current version posted in-app and on our website.
 
 ---
 

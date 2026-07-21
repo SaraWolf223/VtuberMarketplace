@@ -1,10 +1,9 @@
 import { supabaseRestGet, supabaseRpc, getSupabaseEnv } from '@/lib/supabase-rest';
-import { geocodeZip } from '@/features/profile/geocode-zip';
 import type { ListingFormValues } from '@/features/listings/listing-schema';
 import type { MyListingItem, MyListingStatus } from '@/types/my-listings';
 
 const LISTING_SELECT =
-  'id,title,description,price,category,zip_code,status,expires_at,published_at,boosted_until,listing_images(storage_path,thumb_path,sort_order)';
+  'id,title,description,price,category,status,published_at,featured_until,asset_type,license_type,license_text,download_url,youtube_video_url,is_mature,support_duration,listing_images(storage_path,thumb_path,sort_order)';
 
 export async function fetchMyListings(
   accessToken: string,
@@ -85,8 +84,6 @@ export async function updateListingMetadata(
   listingId: string,
   values: ListingFormValues
 ): Promise<void> {
-  const geo = await geocodeZip(values.zip_code, accessToken);
-
   const result = await supabaseRpc<UpdateRpcResult>(
     'update_listing',
     {
@@ -95,9 +92,15 @@ export async function updateListingMetadata(
       p_description: values.description ?? null,
       p_price: values.price,
       p_category: values.category,
-      p_zip_code: values.zip_code,
-      p_lat: geo.lat,
-      p_lng: geo.lng,
+      p_license_text: values.license_text,
+      p_download_url: values.download_url,
+      p_is_mature: values.is_mature ?? false,
+      p_support_duration: values.support_duration ?? 'none',
+      p_compatible_software: values.compatible_software ?? [],
+      p_file_formats: values.file_formats ?? [],
+      p_includes_source_files: values.includes_source_files ?? false,
+      p_credits_text: null,
+      p_asset_fields: {},
     },
     accessToken
   );
@@ -108,6 +111,9 @@ export async function updateListingMetadata(
     }
     if (result.error === 'INVALID_CATEGORY') {
       throw new Error('Choose a valid category — the one selected is no longer available.');
+    }
+    if (result.error === 'LICENSE_TEXT_REQUIRED') {
+      throw new Error('License text is required.');
     }
     if (result.error === 'BANNED_KEYWORD') {
       const keyword =

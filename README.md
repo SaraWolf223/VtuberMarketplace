@@ -18,7 +18,7 @@ This repository is the single product the team builds and operates — it is not
 | [MEDIA_PROVENANCE.md](./MEDIA_PROVENANCE.md) | Provenance and permitted use of bundled sample media |
 | [docs/INDEX.md](./docs/INDEX.md) | Master index (all 30+ docs) |
 | [docs/01-PRD.md](./docs/01-PRD.md) | Product source of truth |
-| [docs/00-Developer_Setup.md](./docs/00-Developer_Setup.md) | Supabase, Stripe, Mapbox setup |
+| [docs/00-Developer_Setup.md](./docs/00-Developer_Setup.md) | Supabase, Stripe, YouTube Data API setup |
 | [docs/08-Cursor_Prompts.md](./docs/08-Cursor_Prompts.md) | Build prompts `00` → `16` |
 | [AGENTS.md](./AGENTS.md) | Cursor agent instructions |
 
@@ -179,10 +179,12 @@ See [docs/25-Google_Auth_and_Profile.md](./docs/25-Google_Auth_and_Profile.md).
 
 ## Hard product rules
 
-- No fixed max price (must be greater than $0)
-- **No** shipping or item payments (MVP). In-app DM is shipped (phone-verified senders, rate-limited, banned-keyword filtered) — see [docs/01-PRD.md](./docs/01-PRD.md) §5.4
-- Listings expire after **21 days** (standard) or **2 months** (Premium); hard delete **7 days after expiry**
-- Launch **one city** at a time → [docs/20-Seed_Content_Strategy.md](./docs/20-Seed_Content_Strategy.md)
+- No fixed max listing price (must be greater than $0)
+- **Real payments via Stripe Connect Express** — destination charges with tiered platform commission (10% free tier / 8% Pro Seller)
+- **Digital delivery only** — seller-hosted download links; the platform never stores asset files
+- **OTU or P2U licensing** on every listing; seller-authored license text is snapshotted at checkout
+- **Global catalog** — no ZIP/radius geo discovery; mature content is age-gated; AI-generated content is banned
+- Purchase-verified reviews only; DMs require email verification — see [docs/01-PRD.md](./docs/01-PRD.md)
 
 ---
 
@@ -195,10 +197,9 @@ The Expo app and Supabase backend live in this repo. Follow the guided setup and
 ## Tech stack
 
 - Expo Router + TypeScript
-- Supabase (Postgres + PostGIS, Auth, Storage, Edge Functions)
-- Stripe (boosts + premium)
-- Mapbox (ZIP geocoding)
-- AdMob (banner ads)
+- Supabase (Postgres, Auth, Storage, Edge Functions)
+- Stripe Connect Express (orders, Pro Seller subscriptions, Featured placements)
+- YouTube Data API (listing demo video validation)
 
 ---
 

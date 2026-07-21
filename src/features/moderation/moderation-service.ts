@@ -14,6 +14,7 @@ export type ReportReason =
   | 'counterfeit'
   | 'stolen'
   | 'misleading'
+  | 'ai_generated_content'
   | 'other';
 
 export const REPORT_REASONS: { id: ReportReason; label: string }[] = [
@@ -24,6 +25,7 @@ export const REPORT_REASONS: { id: ReportReason; label: string }[] = [
   { id: 'counterfeit', label: 'Counterfeit' },
   { id: 'stolen', label: 'Stolen goods' },
   { id: 'misleading', label: 'Misleading' },
+  { id: 'ai_generated_content', label: 'AI-generated content' },
   { id: 'other', label: 'Other' },
 ];
 

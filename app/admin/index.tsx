@@ -17,7 +17,7 @@ type HubItem = {
   title: string;
   description: string;
   route: HubRoute;
-  countKey?: 'openReports';
+  countKey?: 'openReports' | 'pendingStrikes';
 };
 
 const SECTIONS: { label: string; items: HubItem[] }[] = [
@@ -29,6 +29,12 @@ const SECTIONS: { label: string; items: HubItem[] }[] = [
         description: 'Review paused listings, open reports, warn, ban, or delete.',
         route: '/admin/moderation',
         countKey: 'openReports',
+      },
+      {
+        title: 'Strike confirmation queue',
+        description: 'Confirm link-health strikes after grace periods expire.',
+        route: '/admin/strikes',
+        countKey: 'pendingStrikes',
       },
       {
         title: 'Warned users',
@@ -70,50 +76,30 @@ const SECTIONS: { label: string; items: HubItem[] }[] = [
         description: 'Searchable list of every account email address.',
         route: '/admin/users',
       },
-      {
-        title: 'College student emails',
-        description: 'Active .edu verifications only — with account details.',
-        route: '/admin/college-students',
-      },
     ],
   },
   {
     label: 'Commerce & settings',
     items: [
       {
-        title: 'Android waitlist',
-        description: 'Landing signups with founding codes — Android launch.',
-        route: '/admin/waitlist',
-      },
-      {
-        title: 'iPhone waitlist',
-        description: 'iOS waitlist emails — App Store launch updates.',
-        route: '/admin/ios-waitlist',
-      },
-      {
-        title: 'Bulk email',
-        description: 'Email Android waitlist, iPhone waitlist, or registered users.',
-        route: '/admin/bulk-email',
-      },
-      {
         title: 'Promo codes',
         description: 'Create and deactivate promo codes.',
         route: '/admin/promo-codes',
       },
       {
-        title: 'Seed program',
-        description: 'Founding sellers, approve $1 listings, extend expiry, track payouts.',
-        route: '/admin/seed',
+        title: 'Platform settings',
+        description: 'Featured placement, fee tiers, and moderation thresholds.',
+        route: '/admin/settings',
       },
       {
-        title: 'Platform settings',
-        description: 'Boost duration, pricing, radius options, and moderation thresholds.',
-        route: '/admin/settings',
+        title: 'Bulk email',
+        description: 'Email registered users in bulk.',
+        route: '/admin/bulk-email',
       },
     ],
   },
   {
-    label: 'White-label',
+    label: 'Store settings',
     items: [
       {
         title: 'Branding',
@@ -148,10 +134,12 @@ function useQueueCountMap(counts: {
   pausedListings: number;
   openReports: number;
   overdueReports: number;
+  pendingStrikes: number;
 } | undefined) {
   return {
     pausedListings: counts?.pausedListings ?? 0,
     openReports: counts?.openReports ?? 0,
+    pendingStrikes: counts?.pendingStrikes ?? 0,
   };
 }
 
@@ -179,14 +167,15 @@ export default function AdminHomeScreen(): React.JSX.Element {
       return total > 0 ? total : null;
     }
     if (!item.countKey) return null;
-    return countMap[item.countKey] > 0 ? countMap[item.countKey] : null;
+    const value = countMap[item.countKey];
+    return value > 0 ? value : null;
   };
 
   return (
     <ScrollView style={styles.root} contentContainerStyle={styles.content}>
       <Text style={styles.lead}>
         {profile?.role === 'manager'
-          ? 'Moderation tools for reports and users.'
+          ? 'Moderation tools for reports, strikes, and users.'
           : 'Choose a section below.'}
       </Text>
 
@@ -211,6 +200,9 @@ export default function AdminHomeScreen(): React.JSX.Element {
           </Text>
           <Text style={styles.slaLine}>
             {counts.pausedListings} paused listing{counts.pausedListings === 1 ? '' : 's'}
+          </Text>
+          <Text style={styles.slaLine}>
+            {counts.pendingStrikes} strike{counts.pendingStrikes === 1 ? '' : 's'} ready to confirm
           </Text>
         </View>
       ) : null}

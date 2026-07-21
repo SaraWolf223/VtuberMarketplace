@@ -1,4 +1,4 @@
-# Local Marketplace Privacy Policy
+# VTuber Marketplace Privacy Policy
 
 > **Pre-production draft.** Recommend licensed attorney review before major scaling. Not legal advice.
 
@@ -9,7 +9,7 @@
 
 ## 1. Introduction
 
-Local Marketplace ("**we**," "**us**") explains here how we collect, use, disclose, and protect information when you use the Local Marketplace mobile app, website, and related services ("**Service**") — a global marketplace for pre-made digital VTuber assets.
+VTuber Marketplace ("**we**," "**us**") explains here how we collect, use, disclose, and protect information when you use the VTuber Marketplace mobile app, website, and related services ("**Service**") — a global marketplace for pre-made digital VTuber assets.
 
 **Operator:** [YOUR COMPANY LLC]  
 **Privacy contact:** support@yourdomain.com
@@ -181,7 +181,7 @@ The Service is **not directed to children under 18**. We do not knowingly collec
 
 ## 9. International users
 
-Local Marketplace is a **global marketplace** operated from the **United States**. If you access the Service from elsewhere, your information may be processed in the U.S. where privacy laws may differ from your country.
+VTuber Marketplace is a **global marketplace** operated from the **United States**. If you access the Service from elsewhere, your information may be processed in the U.S. where privacy laws may differ from your country.
 
 ---
 

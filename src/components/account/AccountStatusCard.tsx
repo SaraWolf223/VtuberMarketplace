@@ -2,42 +2,30 @@ import { View, Text, StyleSheet, Pressable, ActivityIndicator } from 'react-nati
 import { useRouter } from 'expo-router';
 import { useSellerBenefits } from '@/hooks/useSellerBenefits';
 import { useProfile } from '@/hooks/useProfile';
-import { isPremiumActive } from '@/features/monetization/premium-service';
-import { PREMIUM_FREE_BOOSTS_PER_MONTH } from '@/constants/premium';
-import { FOUNDING_FREE_BOOSTS_PER_MONTH } from '@/constants/founding';
+import { isProSellerOrLegacyPremium } from '@/features/monetization/pro-seller-service';
+import { PRO_SELLER_FEATURED_CREDITS_PER_MONTH } from '@/constants/pro-seller';
 import { FREE_LISTINGS_PER_MONTH } from '@/constants/listings';
 import { spacing, radius } from '@/theme/tokens';
 import { useThemeColors } from '@/hooks/useThemeColors';
 import { createThemedStyles } from '@/theme/useThemedStyles';
 import { fontSize, fontWeight } from '@/theme/typography';
 
-/** Visible account limits — boost credits, listing quota, Premium link. */
+/** Visible account limits — Featured credits, listing quota, Pro Seller link. */
 export function AccountStatusCard(): React.JSX.Element {
   const styles = useStyles();
   const colors = useThemeColors();
   const router = useRouter();
   const { data: profile } = useProfile();
   const {
-    premiumActive,
-    isFoundingSeller: benefitsFounding,
-    boostCreditsRemaining,
-    boostCreditsTotal,
-    foundingBoostsRemaining,
-    foundingBoostsTotal,
+    proSellerActive,
+    featuredCreditsRemaining,
+    featuredCreditsTotal,
     listingsRemaining,
     listingsLimit,
     isLoading,
     isError,
     refetch,
   } = useSellerBenefits();
-
-  const isFoundingSeller = benefitsFounding || !!profile?.is_founding_seller;
-  const foundingRemaining =
-    foundingBoostsRemaining ||
-    (isFoundingSeller && !benefitsFounding ? FOUNDING_FREE_BOOSTS_PER_MONTH : 0);
-  const foundingTotal =
-    foundingBoostsTotal ||
-    (isFoundingSeller ? FOUNDING_FREE_BOOSTS_PER_MONTH : 0);
 
   if (isLoading) {
     return (
@@ -48,24 +36,22 @@ export function AccountStatusCard(): React.JSX.Element {
   }
 
   if (isError) {
-    const fallbackFounding = !!profile?.is_founding_seller;
-    const fallbackPremium = isPremiumActive(!!profile?.is_premium, profile?.premium_until);
+    const fallbackPro = isProSellerOrLegacyPremium(profile as {
+      is_pro_seller?: boolean;
+      pro_seller_until?: string | null;
+      is_premium?: boolean;
+      premium_until?: string | null;
+    });
     return (
       <Pressable style={styles.card} onPress={() => refetch()}>
-        {fallbackFounding ? (
+        {fallbackPro ? (
           <Text style={styles.line}>
-            <Text style={styles.boldFounding}>Founding Seller</Text> · up to{' '}
-            {FOUNDING_FREE_BOOSTS_PER_MONTH} free boosts / month
+            <Text style={styles.bold}>Pro Seller</Text> · up to{' '}
+            {PRO_SELLER_FEATURED_CREDITS_PER_MONTH} Featured credits / month
           </Text>
-        ) : null}
-        {fallbackPremium ? (
-          <Text style={styles.line}>
-            <Text style={styles.bold}>Premium</Text> · up to {PREMIUM_FREE_BOOSTS_PER_MONTH} free
-            boosts / month
-          </Text>
-        ) : !fallbackFounding ? (
-          <Text style={styles.line}>Free plan · upgrade for 10 free boosts / month</Text>
-        ) : null}
+        ) : (
+          <Text style={styles.line}>Free plan · upgrade for lower fees and Featured credits</Text>
+        )}
         <Text style={styles.line}>Up to {FREE_LISTINGS_PER_MONTH} new listings per month</Text>
         <Text style={styles.error}>Could not refresh limits. Tap to retry.</Text>
       </Pressable>
@@ -75,32 +61,26 @@ export function AccountStatusCard(): React.JSX.Element {
   return (
     <View style={styles.card}>
       <Text style={styles.title}>Your account</Text>
-      {isFoundingSeller ? (
+      {proSellerActive ? (
         <Text style={styles.line}>
-          <Text style={styles.boldFounding}>Founding Seller</Text> · {foundingRemaining} of{' '}
-          {foundingTotal} free boosts left
+          <Text style={styles.bold}>Pro Seller</Text> · {featuredCreditsRemaining} of{' '}
+          {featuredCreditsTotal || PRO_SELLER_FEATURED_CREDITS_PER_MONTH} Featured credits left
         </Text>
-      ) : null}
-      {premiumActive ? (
-        <Text style={styles.line}>
-          <Text style={styles.bold}>Premium</Text> · {boostCreditsRemaining} of{' '}
-          {boostCreditsTotal || PREMIUM_FREE_BOOSTS_PER_MONTH} free boosts left
-        </Text>
-      ) : !isFoundingSeller ? (
-        <Text style={styles.line}>Free plan · upgrade for 10 free boosts / month</Text>
-      ) : null}
+      ) : (
+        <Text style={styles.line}>Free plan · 10% commission · upgrade for 8% + Featured credits</Text>
+      )}
       <Text style={styles.line}>
         {listingsRemaining} of {listingsLimit} new listings left this month
       </Text>
       <View style={styles.actions}>
-        {premiumActive ? (
+        {proSellerActive ? (
           <Pressable style={styles.btn} onPress={() => router.push('/my-listings')}>
-            <Text style={styles.btnText}>My listings · boost</Text>
+            <Text style={styles.btnText}>My listings · feature</Text>
           </Pressable>
         ) : null}
         <Pressable style={[styles.btn, styles.btnOutline]} onPress={() => router.push('/settings/premium')}>
           <Text style={[styles.btnText, styles.btnTextOutline]}>
-            {premiumActive ? 'Manage Premium' : 'Get Premium'}
+            {proSellerActive ? 'Manage Pro Seller' : 'Get Pro Seller'}
           </Text>
         </Pressable>
       </View>
@@ -127,7 +107,6 @@ const useStyles = createThemedStyles((colors) => StyleSheet.create({
   },
   line: { fontSize: fontSize.body, color: colors.text },
   bold: { fontWeight: fontWeight.bold, color: colors.premium },
-  boldFounding: { fontWeight: fontWeight.bold, color: colors.warning },
   error: { fontSize: fontSize.caption, color: colors.error, textAlign: 'center' },
   actions: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginTop: spacing.sm },
   btn: {

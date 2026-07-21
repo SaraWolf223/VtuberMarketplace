@@ -17,6 +17,7 @@ import {
   markOrderRefunded,
   syncConnectAccountFlags,
 } from '../_shared/apply-order.ts';
+import { syncProSellerFromSubscription } from '../_shared/apply-pro-seller.ts';
 
 Deno.serve(async (req) => {
   if (req.method !== 'POST') {
@@ -90,6 +91,24 @@ Deno.serve(async (req) => {
             : session.payment_intent?.id ?? null;
         await markSupportQuotePaid(admin, session.metadata.quote_id, pi);
       }
+      if (
+        session.mode === 'payment' &&
+        session.metadata?.type === 'featured_listing' &&
+        session.metadata.listing_id &&
+        session.metadata.user_id
+      ) {
+        const pi =
+          typeof session.payment_intent === 'string'
+            ? session.payment_intent
+            : session.payment_intent?.id ?? null;
+        await admin.rpc('apply_featured_placement', {
+          p_user_id: session.metadata.user_id,
+          p_listing_id: session.metadata.listing_id,
+          p_source: 'paid',
+          p_amount_cents: Number(session.metadata.amount_cents ?? 0) || 0,
+          p_stripe_payment_intent_id: pi,
+        });
+      }
       if (session.mode === 'subscription' && session.subscription) {
         const subId =
           typeof session.subscription === 'string'
@@ -108,22 +127,33 @@ Deno.serve(async (req) => {
           );
         } else if (
           userId &&
-          (!sub.metadata?.user_id || sub.metadata?.type !== 'premium_seller')
+          (session.metadata?.type === 'pro_seller' ||
+            session.metadata?.type === 'premium_seller')
         ) {
-          await stripe.subscriptions.update(subId, {
-            metadata: {
-              ...sub.metadata,
-              type: 'premium_seller',
-              user_id: userId,
-            },
-          });
-          sub = await stripe.subscriptions.retrieve(subId);
+          const metaType =
+            session.metadata?.type === 'pro_seller' ? 'pro_seller' : 'premium_seller';
+          if (!sub.metadata?.user_id || sub.metadata?.type !== metaType) {
+            await stripe.subscriptions.update(subId, {
+              metadata: {
+                ...sub.metadata,
+                type: metaType,
+                user_id: userId,
+              },
+            });
+            sub = await stripe.subscriptions.retrieve(subId);
+          }
         }
         if (
+          sub.metadata?.type === 'pro_seller' ||
+          session.metadata?.type === 'pro_seller'
+        ) {
+          await syncProSellerFromSubscription(admin, sub, userId ?? undefined);
+        } else if (
           sub.metadata?.type === 'premium_seller' ||
           session.metadata?.type === 'premium_seller'
         ) {
           await syncPremiumFromSubscription(admin, sub, userId ?? undefined);
+          await syncProSellerFromSubscription(admin, sub, userId ?? undefined);
         }
       }
     }
@@ -135,8 +165,11 @@ Deno.serve(async (req) => {
       const sub = event.data.object as Stripe.Subscription;
       if (sub.metadata?.type === 'listing_support_subscription') {
         await syncListingSupportSubscription(admin, sub);
+      } else if (sub.metadata?.type === 'pro_seller') {
+        await syncProSellerFromSubscription(admin, sub);
       } else if (sub.metadata?.type === 'premium_seller') {
         await syncPremiumFromSubscription(admin, sub);
+        await syncProSellerFromSubscription(admin, sub);
       }
     }
 
@@ -144,8 +177,11 @@ Deno.serve(async (req) => {
       const sub = event.data.object as Stripe.Subscription;
       if (sub.metadata?.type === 'listing_support_subscription') {
         await syncListingSupportSubscription(admin, sub);
+      } else if (sub.metadata?.type === 'pro_seller') {
+        await syncProSellerFromSubscription(admin, sub);
       } else if (sub.metadata?.type === 'premium_seller') {
         await syncPremiumFromSubscription(admin, sub);
+        await syncProSellerFromSubscription(admin, sub);
       }
     }
 

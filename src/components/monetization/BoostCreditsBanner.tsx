@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from 'react-native';
-import { PREMIUM_FREE_BOOSTS_PER_MONTH } from '@/constants/premium';
+import { PRO_SELLER_FEATURED_CREDITS_PER_MONTH } from '@/constants/pro-seller';
 import { spacing, radius } from '@/theme/tokens';
 import { createThemedStyles } from '@/theme/useThemedStyles';
 import { fontSize, fontWeight } from '@/theme/typography';
@@ -12,11 +12,11 @@ type Props = {
   subtitle?: string;
 };
 
-export function BoostCreditsBanner({
+export function FeaturedCreditsBanner({
   remaining,
-  total = PREMIUM_FREE_BOOSTS_PER_MONTH,
+  total = PRO_SELLER_FEATURED_CREDITS_PER_MONTH,
   compact,
-  title = 'Premium boost credits',
+  title = 'Pro Seller Featured credits',
   subtitle,
 }: Props): React.JSX.Element {
   const styles = useStyles();
@@ -24,19 +24,22 @@ export function BoostCreditsBanner({
   const hint =
     subtitle ??
     (depleted
-      ? 'No free boosts left — use paid Boost or wait until next month.'
-      : 'Tap Free boost on a listing below (or paid Boost to skip using a credit).');
+      ? 'No Featured credits left — pay per placement or wait until next month.'
+      : 'Tap Use Featured credit on a listing below (or pay per placement).');
 
   return (
     <View style={[styles.banner, depleted && styles.bannerDepleted]}>
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.count}>
-        {remaining} <Text style={styles.of}>of {total}</Text> free boosts left this month
+        {remaining} <Text style={styles.of}>of {total}</Text> Featured credits left this month
       </Text>
       {!compact ? <Text style={styles.hint}>{hint}</Text> : null}
     </View>
   );
 }
+
+/** @deprecated use FeaturedCreditsBanner */
+export const BoostCreditsBanner = FeaturedCreditsBanner;
 
 const useStyles = createThemedStyles((colors) => StyleSheet.create({
   banner: {

@@ -1,16 +1,16 @@
-# Local Marketplace DMCA / Copyright Policy
+# VTuber Marketplace DMCA / Copyright Policy
 
 > **Pre-production draft.** This document has not been reviewed by a licensed attorney. Recommend licensed attorney review before commercial launch or major scaling. Not legal advice.
 
 **Last updated:** [LAST UPDATED DATE — see docs/legal/ENTITY.md]
 
-This policy explains how Local Marketplace responds to claims of copyright infringement under the **Digital Millennium Copyright Act (DMCA)**, 17 U.S.C. § 512. It is incorporated into our [Terms of Service](./TERMS_OF_SERVICE.md) and backs the platform's bans on **AI-generated content** and **stolen/unauthorized use of another artist's work** referenced in the [Terms of Service](./TERMS_OF_SERVICE.md), [Seller Agreement](./SELLER_AGREEMENT.md), and [Community Guidelines](./COMMUNITY_GUIDELINES.md).
+This policy explains how VTuber Marketplace responds to claims of copyright infringement under the **Digital Millennium Copyright Act (DMCA)**, 17 U.S.C. § 512. It is incorporated into our [Terms of Service](./TERMS_OF_SERVICE.md) and backs the platform's bans on **AI-generated content** and **stolen/unauthorized use of another artist's work** referenced in the [Terms of Service](./TERMS_OF_SERVICE.md), [Seller Agreement](./SELLER_AGREEMENT.md), and [Community Guidelines](./COMMUNITY_GUIDELINES.md).
 
 ---
 
 ## 1. Designated agent
 
-Local Marketplace has designated the following agent to receive notices of claimed copyright infringement:
+VTuber Marketplace has designated the following agent to receive notices of claimed copyright infringement:
 
 | Field | Value |
 |-------|-------|
@@ -55,7 +55,7 @@ If your listing or content was removed and you believe this was a mistake or mis
 1. **Identification of the material** that was removed and its location on the Service before removal.
 2. **A statement, made under penalty of perjury, that you have a good-faith belief** the material was removed or disabled as a result of mistake or misidentification.
 3. **Your name, address, and telephone number.**
-4. **A statement that you consent to the jurisdiction** of the federal district court for the judicial district in which your address is located (or, if outside the United States, any judicial district in which Local Marketplace may be found), and that you will accept service of process from the person who submitted the original takedown notice (or their agent).
+4. **A statement that you consent to the jurisdiction** of the federal district court for the judicial district in which your address is located (or, if outside the United States, any judicial district in which VTuber Marketplace may be found), and that you will accept service of process from the person who submitted the original takedown notice (or their agent).
 5. **Your physical or electronic signature.**
 
 Send counter-notices to the designated agent in [§1](#1-designated-agent). Upon receiving a valid counter-notice, we will forward it to the original complaining party. Unless that party files a court action seeking to restrain the seller from the infringing activity, we may restore the removed content in **10–14 business days**, as the DMCA permits.
@@ -64,7 +64,7 @@ Send counter-notices to the designated agent in [§1](#1-designated-agent). Upon
 
 ## 5. Repeat-infringer policy
 
-Local Marketplace terminates the accounts of users determined to be **repeat infringers**. An account that receives **multiple confirmed valid DMCA takedown notices** — notices that are not successfully countered or resolved in the seller's favor — will be terminated, in addition to any strike, listing removal, or other enforcement already applied.
+VTuber Marketplace terminates the accounts of users determined to be **repeat infringers**. An account that receives **multiple confirmed valid DMCA takedown notices** — notices that are not successfully countered or resolved in the seller's favor — will be terminated, in addition to any strike, listing removal, or other enforcement already applied.
 
 A **confirmed report that a listing uses stolen or unauthorized content** — whether raised as a DMCA notice under this policy or as an in-app report under the [Community Guidelines](./COMMUNITY_GUIDELINES.md#originality-and-prohibited-content-rules) — results in removal of the listing and counts as an enforcement escalation against the seller's account, alongside (but separate from) the link-health strike system described in the [Seller Agreement §5](./SELLER_AGREEMENT.md#5-link-health-and-the-strike-system). Repeated confirmed incidents move a seller up the enforcement ladder described in the [Community Guidelines](./COMMUNITY_GUIDELINES.md) (Part F — Enforcement) faster than a single incident would, and may independently justify suspension or a permanent ban.
 

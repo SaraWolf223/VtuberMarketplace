@@ -4,7 +4,7 @@
 
 Publish these on your website (e.g. `yourdomain.com/terms`) and link from the app **before** App Store submission.
 
-**Start here:** [LEGAL_INDEX.md](./LEGAL_INDEX.md) — how documents fit together (research-informed structure, Local Marketplace-specific content).
+**Start here:** [LEGAL_INDEX.md](./LEGAL_INDEX.md) — how documents fit together (research-informed structure, VTuber Marketplace-specific content).
 
 | File | Use |
 |------|-----|
