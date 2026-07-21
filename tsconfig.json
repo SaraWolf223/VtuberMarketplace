@@ -1,0 +1,30 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "types": [
+      "node"
+    ],
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    }
+  },
+  "include": [
+    "app/**/*.ts",
+    "app/**/*.tsx",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "scripts/**/*.ts",
+    "*.ts",
+    "*.tsx"
+  ],
+  "exclude": [
+    "android",
+    "dist",
+    "node_modules",
+    "supabase/functions",
+    "website/app"
+  ]
+}

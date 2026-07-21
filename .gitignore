@@ -1,0 +1,84 @@
+# Dependencies
+node_modules/
+
+# Expo
+expo-qr.png
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Native
+ios/
+android/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+
+# Environment & secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+website/scripts/waitlist-config.js
+.buyer-setup.local.json
+
+# Supabase
+supabase/.branches
+supabase/.temp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+*.swp
+*.swo
+
+# Logs & debug
+android-build.log
+android-build.log.*
+android-build-direct.log
+android-gradle.out.log
+android-gradle.err.log
+android-gradle-direct.out.log
+android-gradle-direct.err.log
+metro-android.out.log
+metro-android.err.log
+*.snapshot.log
+.web-dev-server.log
+apk-download-qr.png
+.apk-serve/
+_tmp_*/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.metro-health-check*
+
+# Testing
+coverage/
+scripts/.web-*.png
+scripts/.signed-in-shots/
+scripts/.device-shots/
+scripts/.android-shots/
+scripts/.*.mjs
+
+# EAS / Firebase (contains an API key — never commit)
+.google-services.json.local
+google-services.json
+
+# TypeScript
+*.tsbuildinfo
+
+# Misc
+*.pem
+
+# Seed-for-screenshots toolset artifacts (temporary, never commit)
+scripts/seed-screenshots/assets/
+scripts/seed-screenshots/backup/
+scripts/seed-screenshots/captures/
+scripts/seed-screenshots/manifest.json

@@ -1,0 +1,2 @@
+-- Optional dev seed (runs on supabase db reset)
+-- Banned keywords are in migration 013_seed_keywords.sql

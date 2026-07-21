@@ -1,0 +1,4 @@
+# Apple requires the AASA file served as application/json with no redirect.
+# (.well-known/assetlinks.json already gets application/json from its extension.)
+/.well-known/apple-app-site-association
+  Content-Type: application/json

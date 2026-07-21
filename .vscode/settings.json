@@ -1,0 +1,36 @@
+{
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/.expo/**": true,
+    "**/dist/**": true,
+    "**/build/**": true,
+    "**/web-build/**": true,
+    "**/ios/Pods/**": true,
+    "**/android/.gradle/**": true,
+    "**/android/build/**": true,
+    "**/android/app/build/**": true,
+    "**/.next/**": true,
+    "**/coverage/**": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.expo": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/web-build": true,
+    "**/ios/Pods": true,
+    "**/android/.gradle": true,
+    "**/android/build": true,
+    "**/package-lock.json": true,
+    "**/coverage": true
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.expo": true
+  },
+  "typescript.tsserver.maxTsServerMemory": 3072,
+  "typescript.disableAutomaticTypeAcquisition": true,
+  "files.useExperimentalFileWatcher": true
+}

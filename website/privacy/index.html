@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Privacy Policy — Local Marketplace</title>
+  <style>
+  body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; max-width: 720px; margin: 0 auto; padding: 24px; line-height: 1.6; color: #0a0a0f; background: #f8fafc; }
+  h1 { font-size: 1.75rem; margin-top: 0; }
+  h2 { font-size: 1.25rem; margin-top: 2rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.25rem; }
+  h3 { font-size: 1.05rem; margin-top: 1.5rem; }
+  a { color: #0066ff; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.95rem; }
+  th, td { border: 1px solid #e2e8f0; padding: 8px 10px; text-align: left; vertical-align: top; }
+  th { background: #eff6ff; }
+  blockquote { border-left: 3px solid #0066ff; margin: 1rem 0; padding: 0.5rem 1rem; background: #fff; color: #475569; }
+  hr { border: none; border-top: 1px solid #e2e8f0; margin: 2rem 0; }
+  nav { margin-bottom: 2rem; font-size: 0.9rem; }
+  nav a { margin-right: 1rem; }
+  footer { margin-top: 3rem; font-size: 0.85rem; color: #64748b; }
+</style>
+</head>
+<body>
+  <nav><a href="/terms">Terms of Service</a>
+    <a href="/privacy">Privacy Policy</a>
+    <a href="/community">Community Guidelines</a>
+    <a href="/safety">Meetup Safety</a></nav>
+  <main><h1>Local Marketplace Privacy Policy</h1>
+
+<blockquote><p><strong>Pre-production draft.</strong> Recommend licensed attorney review before major scaling. Not legal advice.</p></blockquote>
+
+<p><strong>Last updated:</strong> [LAST UPDATED DATE — see docs/legal/ENTITY.md]  </p>
+<p><strong>Effective date:</strong> [EFFECTIVE DATE — see docs/legal/ENTITY.md]</p>
+
+<hr />
+
+<h2>1. Introduction</h2>
+
+<p>Local Marketplace (&quot;<strong>we</strong>,&quot; &quot;<strong>us</strong>&quot;) explains here how we collect, use, disclose, and protect information when you use the Local Marketplace mobile app and related services (&quot;<strong>Service</strong>&quot;).</p>
+
+<p><strong>Operator:</strong> [YOUR COMPANY LLC]  </p>
+<p><strong>Privacy contact:</strong> support@yourdomain.com</p>
+
+<p>This Privacy Policy is incorporated into our <a href="./TERMS_OF_SERVICE.md">Terms of Service</a>. By using the Service, you acknowledge this Policy.</p>
+
+<p>We may update this Policy. We will revise the &quot;Last updated&quot; date and, for material changes, provide notice in the app or by email where appropriate.</p>
+
+<hr />
+
+<h2>2. Information we collect</h2>
+
+<p>We group data into the categories below (similar to how major marketplaces disclose data for app stores and state privacy laws).</p>
+
+<h3>2.1 Identifiers and account data</h3>
+
+<table>
+<tr><th>Data</th><th>Examples</th><th>Source</th></tr>
+<tr><td>Account identifiers</td><td>User ID, Google subject ID</td><td>Google sign-in</td></tr>
+<tr><td>Profile</td><td>Display name, username, avatar URL, email</td><td>Google + profile edits</td></tr>
+<tr><td>Phone</td><td>Phone number, verification timestamp</td><td>You (SMS OTP)</td></tr>
+<tr><td>Terms acceptance</td><td>Version id, acceptance timestamp</td><td>In-app acceptance flow</td></tr>
+</table>
+
+<h3>2.2 Location and discovery</h3>
+
+<table>
+<tr><th>Data</th><th>Purpose</th></tr>
+<tr><td>Home ZIP code</td><td>Feed radius and local discovery</td></tr>
+<tr><td>Derived coordinates</td><td>Geocoding ZIP via Mapbox (server-side)</td></tr>
+<tr><td>Optional device location</td><td>Only if you use a &quot;use my location&quot; feature — converted to approximate area, not continuous GPS tracking</td></tr>
+</table>
+
+<p>We do <strong>not</strong> sell your location to data brokers.</p>
+
+<h3>2.3 Listing and commerce content</h3>
+
+<table>
+<tr><th>Data</th><th>Purpose</th></tr>
+<tr><td>Listing title, description, price, photos, category</td><td>Marketplace</td></tr>
+<tr><td>Listing status, expiry, boost timestamps</td><td>Lifecycle and monetization</td></tr>
+</table>
+
+<h3>2.4 Communications</h3>
+
+<table>
+<tr><th>Data</th><th>Purpose</th></tr>
+<tr><td>Direct messages between buyers and sellers</td><td>Contact, safety, abuse prevention</td></tr>
+<tr><td>Reports, blocks, moderation notes</td><td>Trust and safety</td></tr>
+<tr><td>Support emails</td><td>Customer support</td></tr>
+</table>
+
+<h3>2.5 Payment-related data</h3>
+
+<p>We use <strong>Stripe</strong> for boosts and premium subscriptions. We receive payment status, customer IDs, and transaction metadata — <strong>not</strong> full payment card numbers (Stripe stores those).</p>
+
+<h3>2.6 Verification and badges</h3>
+
+<table>
+<tr><th>Data</th><th>Purpose</th></tr>
+<tr><td>`.edu` email (college badge)</td><td>Student badge verification</td></tr>
+<tr><td>OTP hashes</td><td>College email verification (not plain codes in long-term storage)</td></tr>
+</table>
+
+<h3>2.7 Device and usage data</h3>
+
+<table>
+<tr><th>Data</th><th>Purpose</th></tr>
+<tr><td>Device type, OS, app version</td><td>Diagnostics</td></tr>
+<tr><td>IP address (server logs)</td><td>Security, fraud prevention</td></tr>
+<tr><td>Product analytics events</td><td>Improve the Service (e.g., PostHog)</td></tr>
+<tr><td>Push notification token</td><td>Optional alerts (e.g., listing expiry)</td></tr>
+<tr><td>Advertising ID (if AdMob enabled)</td><td>Ad serving per Google/AdMob policies</td></tr>
+</table>
+
+<h3>2.8 Information from third parties</h3>
+
+<table>
+<tr><th>Provider</th><th>Data received</th></tr>
+<tr><td><strong>Google</strong></td><td>Sign-in profile (name, email, photo)</td></tr>
+<tr><td><strong>Stripe</strong></td><td>Payment and subscription status</td></tr>
+<tr><td><strong>Mapbox</strong></td><td>Geocoding results for ZIP</td></tr>
+<tr><td><strong>Google AdMob</strong></td><td>Ad interaction data (when ads enabled)</td></tr>
+<tr><td><strong>Email provider</strong> (e.g., Resend)</td><td>Delivery status for college OTP emails</td></tr>
+</table>
+
+<hr />
+
+<h2>3. How we use information</h2>
+
+<p>We use information to:</p>
+
+<li>Provide and improve the Service (feed, listings, messages, search)  </li>
+<li>Authenticate users and prevent fraud  </li>
+<li>Process boosts and premium payments  </li>
+<li>Enforce <a href="./COMMUNITY_GUIDELINES.md">Community Guidelines</a> and respond to reports  </li>
+<li>Send <strong>transactional</strong> SMS (phone verification) and service notifications  </li>
+<li>Comply with law and protect rights, safety, and property  </li>
+<li>Analyze aggregated usage to improve product decisions  </li>
+
+<p>We do <strong>not</strong> sell your personal information. We do <strong>not</strong> use your data to run a national classifieds index — discovery stays <strong>ZIP + radius</strong> bounded.</p>
+
+<hr />
+
+<h2>4. How we share information</h2>
+
+<table>
+<tr><th>Recipient</th><th>Why</th></tr>
+<tr><td><strong>Supabase</strong></td><td>Database, auth, storage, edge functions</td></tr>
+<tr><td><strong>Stripe</strong></td><td>Payment processing</td></tr>
+<tr><td><strong>Mapbox</strong></td><td>ZIP geocoding</td></tr>
+<tr><td><strong>Google</strong></td><td>Sign-in; AdMob when enabled</td></tr>
+<tr><td><strong>Analytics provider</strong> (e.g., PostHog)</td><td>Product metrics</td></tr>
+<tr><td><strong>Email provider</strong></td><td>College verification emails</td></tr>
+<tr><td><strong>Law enforcement / regulators</strong></td><td>Valid legal process or to protect safety</td></tr>
+<tr><td><strong>Business transfers</strong></td><td>Merger, acquisition, or asset sale (with notice where required)</td></tr>
+</table>
+
+<p>We may share <strong>public profile and listing content</strong> with other users as part of the Service (for example, seller name on a listing).</p>
+
+<hr />
+
+<h2>5. Your choices and privacy rights</h2>
+
+<p>Depending on where you live (including California, Colorado, Virginia, and other U.S. states with privacy laws), you may have the right to:</p>
+
+<li><strong>Access</strong> personal information we hold about you  </li>
+<li><strong>Correct</strong> inaccurate information  </li>
+<li><strong>Delete</strong> your account and associated data  </li>
+<li><strong>Opt out</strong> of certain processing (where applicable)  </li>
+<li><strong>Appeal</strong> a denial of a privacy request (where applicable)  </li>
+
+<p><strong>How to exercise rights:</strong> email support@yourdomain.com or use in-app <strong>Delete account</strong> in Settings. We will verify your request and respond within timelines required by law (for example, 45 days under CCPA). See <a href="https://yourdomain.com/delete-account">How to delete your account</a> for step-by-step instructions, including how to request deletion without the app.</p>
+
+<p><strong>Account deletion</strong> cancels subscriptions where possible, removes your profile, and triggers deletion of listings and content per our retention schedule.</p>
+
+<p>We do not discriminate against you for exercising privacy rights.</p>
+
+<h3>5.1 State-specific notices</h3>
+
+<p>Some U.S. states require additional disclosures. If required by law, we will publish supplements at <strong>https://yourdomain.com/privacy/states</strong>.</p>
+
+<hr />
+
+<h2>6. Retention</h2>
+
+<table>
+<tr><th>Data type</th><th>Typical retention</th></tr>
+<tr><td>Active listings</td><td>Until expired, sold, or deleted</td></tr>
+<tr><td>Expired listings</td><td>Standard listings leave the active feed after <strong>21 days</strong>; Premium listings after <strong>2 months</strong>; hard delete happens <strong>7 days after expiry</strong> (images included)</td></tr>
+<tr><td>Account profile</td><td>Until you delete your account</td></tr>
+<tr><td>Direct messages</td><td>While accounts are active, plus up to <strong>90 days</strong> after account deletion for safety and abuse investigations</td></tr>
+<tr><td>Moderation logs</td><td>~1–2 years for safety and legal defense</td></tr>
+<tr><td>Phone verification metadata</td><td>While account is active</td></tr>
+<tr><td>College badge data</td><td>Until badge expires + grace period</td></tr>
+<tr><td>Stripe/billing records</td><td>As required for tax and fraud (often ~7 years)</td></tr>
+<tr><td>Terms acceptance record</td><td>While account exists + legal hold period</td></tr>
+</table>
+
+<p>We may retain information longer when required by law or to resolve disputes.</p>
+
+<hr />
+
+<h2>7. Security</h2>
+
+<p>We use technical and organizational measures including encryption in transit, access controls, and database row-level security. No system is 100% secure. Protect your Google account credentials.</p>
+
+<hr />
+
+<h2>8. Children's privacy</h2>
+
+<p>The Service is <strong>not directed to children under 18</strong>. We do not knowingly collect personal information from anyone under 18. Contact support@yourdomain.com to request deletion if you believe a child provided data.</p>
+
+<hr />
+
+<h2>9. International users</h2>
+
+<p>Local Marketplace is operated from the <strong>United States</strong>. If you access the Service from elsewhere, your information may be processed in the U.S. where privacy laws may differ from your country.</p>
+
+<hr />
+
+<h2>10. Cookies and similar technologies</h2>
+
+<p>The mobile app does not use browser cookies. Our website (if any) and analytics providers may use cookies or similar technologies — disclosed on our website when published.</p>
+
+<hr />
+
+<h2>11. Changes to this Policy</h2>
+
+<p>We will post updates with a new &quot;Last updated&quot; date. Material changes may be notified in-app or by email. Continued use after notice means you accept the updated Policy where permitted by law.</p>
+
+<hr />
+
+<h2>12. Contact</h2>
+
+<p><strong>Privacy:</strong> support@yourdomain.com  </p>
+<p><strong>Support:</strong> support@yourdomain.com</p>
+</main>
+  <footer>Local Marketplace · <a href="mailto:support@yourdomain.com">support@yourdomain.com</a></footer>
+</body>
+</html>

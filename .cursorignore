@@ -1,0 +1,25 @@
+﻿# Large/generated folders Cursor should not index or watch.
+# Reduces CPU, memory, and file-watcher load (prevents freezes/crashes).
+
+node_modules/
+.expo/
+dist/
+build/
+web-build/
+coverage/
+
+# Native build artifacts
+ios/Pods/
+ios/build/
+android/.gradle/
+android/build/
+android/app/build/
+
+# Lockfiles & maps (huge, low value for AI context)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+**/*.map
+
+# Logs
+*.log

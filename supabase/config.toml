@@ -1,0 +1,70 @@
+# Local Marketplace — Supabase local config
+# See https://supabase.com/docs/guides/cli/config
+
+project_id = "local-marketplace"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 17
+
+[db.pooler]
+enabled = false
+
+[studio]
+enabled = true
+port = 54323
+
+[inbucket]
+enabled = true
+port = 54324
+
+[storage]
+enabled = true
+file_size_limit = "2MiB"
+
+[auth]
+enabled = true
+site_url = "http://127.0.0.1:8081"
+additional_redirect_urls = ["exp://127.0.0.1:8081", "localmarketplace://callback", "localmarketplace://auth/callback", "localmarketplace://**"]
+jwt_expiry = 3600
+enable_signup = true
+
+[auth.password]
+min_length = 8
+# Matches src/lib/auth/email-auth.ts MIN_PASSWORD_LENGTH client-side check.
+
+# `supabase config push` resets every auth setting not explicitly declared
+# here to the CLI's schema default — which silently disabled TOTP MFA
+# enrollment (enroll_enabled/verify_enabled default to false in the CLI,
+# even though a fresh Supabase project has both ON by default). Pinning
+# these explicitly so a `config push` can never again disable the AAL2
+# admin/manager enforcement this app depends on.
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
+
+# Google OAuth, Apple Sign In, and (on paid Supabase plans) "leaked password
+# protection" (HaveIBeenPwned check) are Dashboard-only settings for the cloud
+# project — see docs/00-Developer_Setup.md §9d — not scriptable via this
+# local CLI config.
+
+[functions.stripe-webhook]
+verify_jwt = false
+
+[functions.join-waitlist]
+verify_jwt = false
+
+[functions.join-ios-waitlist]
+verify_jwt = false
+
+# Cron-invoked (Bearer CRON_SECRET, not a user JWT) — see _shared/cron-auth.ts
+[functions.staff-notify-digest]
+verify_jwt = false
